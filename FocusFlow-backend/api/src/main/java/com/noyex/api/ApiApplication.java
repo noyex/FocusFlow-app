@@ -8,7 +8,8 @@ import org.springframework.context.annotation.ComponentScan;
 @ComponentScan(basePackages = {
         "com.noyex.data",
         "com.noyex.service",
-        "com.noyex.api"
+        "com.noyex.api",
+        "com.noyex.auth"
 })
 public class ApiApplication {
 

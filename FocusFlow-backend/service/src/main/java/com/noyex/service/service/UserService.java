@@ -5,11 +5,11 @@ import com.noyex.data.model.User;
 import com.noyex.data.repository.UserRepository;
 import com.noyex.service.exceptions.UserAlreadyExistsException; // Nowy wyjątek
 import com.noyex.service.exceptions.UserNotFoundException;
-import com.noyex.service.service.IUserService;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -85,12 +85,12 @@ public class UserService implements IUserService {
         if (userDto.getEmail() == null || userDto.getEmail().trim().isEmpty()) {
             throw new IllegalArgumentException("Email cannot be empty");
         }
-        User byUsername = userRepository.findByUsername(userDto.getUsername());
-        if (byUsername != null && !byUsername.getId().equals(existingUser.getId())) {
+        Optional<User> byUsername = userRepository.findByUsername(userDto.getUsername());
+        if (byUsername.isPresent() && !byUsername.get().getId().equals(existingUser.getId())) {
             throw new UserAlreadyExistsException("User with this username already exists");
         }
-        User byEmail = userRepository.findByEmail(userDto.getEmail());
-        if (byEmail != null && !byEmail.getId().equals(existingUser.getId())) {
+        Optional<User> byEmail = userRepository.findByEmail(userDto.getEmail());
+        if (byEmail.isPresent() && !byEmail.get().getId().equals(existingUser.getId())) {
             throw new UserAlreadyExistsException("User with this email already exists");
         }
     }

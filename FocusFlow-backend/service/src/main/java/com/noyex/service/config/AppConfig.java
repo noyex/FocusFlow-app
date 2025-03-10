@@ -14,8 +14,8 @@ public class AppConfig {
         this.userRepository = userRepository;
     }
 
-     @Bean
-     public BCrypt passwordEncoder() {
-         return new BCrypt();
-     }
+//     @Bean
+//     public BCrypt passwordEncoder() {
+//         return new BCrypt();
+//     }
 }
