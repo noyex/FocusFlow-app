@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "sessions")
-@Data
 public class Session {
 
     @Id
@@ -28,4 +27,55 @@ public class Session {
 
     @Column(nullable = false)
     private Long duration;
+
+    public Session() {
+    }
+
+    public Session(Long id, Task task, Method method, LocalDateTime startTime, Long duration) {
+        this.id = id;
+        this.task = task;
+        this.method = method;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public Method getMethod() {
+        return method;
+    }
+
+    public void setMethod(Method method) {
+        this.method = method;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Long duration) {
+        this.duration = duration;
+    }
 }
