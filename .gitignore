@@ -41,3 +41,4 @@ xcuserdata/
 .project
 .settings/
 *.env
+*.yml
