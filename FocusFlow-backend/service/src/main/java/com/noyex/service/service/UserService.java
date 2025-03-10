@@ -1,16 +1,18 @@
-package com.noyex.service.service;
+package com.noyex.service.service; // Poprawiona nazwa pakietu
 
 import com.noyex.data.model.DTOs.UserDto;
 import com.noyex.data.model.User;
 import com.noyex.data.repository.UserRepository;
+import com.noyex.service.exceptions.UserAlreadyExistsException; // Nowy wyjątek
 import com.noyex.service.exceptions.UserNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCrypt;
+import com.noyex.service.service.IUserService;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService implements IUserService{
+public class UserService implements IUserService {
 
     private final UserRepository userRepository;
 
@@ -26,15 +28,12 @@ public class UserService implements IUserService{
 
     @Override
     public List<User> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        if(users.isEmpty()) {
-            throw new UserNotFoundException("No users found");
-        }
-        return users;
+        return userRepository.findAll();
     }
 
     @Override
     public User createUser(UserDto userDto) {
+        validateNewUser(userDto);
         User user = new User();
         return createOrUpdateUser(user, userDto);
     }
@@ -42,41 +41,64 @@ public class UserService implements IUserService{
     @Override
     public User updateUser(Long userId, UserDto userDto) {
         return userRepository.findById(userId)
-                .map(user -> createOrUpdateUser(user, userDto))
+                .map(user -> {
+                    validateUpdateUser(user, userDto);
+                    return createOrUpdateUser(user, userDto);
+                })
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
 
     @Override
     public void deleteUser(Long userId) {
-        if(!userRepository.existsById(userId)){
+        if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("User not found");
         }
         userRepository.deleteById(userId);
     }
 
-    private User createOrUpdateUser(User user, UserDto userDto){
-        validateUser(userDto);
+    private User createOrUpdateUser(User user, UserDto userDto) {
         user.setUsername(userDto.getUsername());
         user.setPassword(hashPassword(userDto.getPassword()));
         user.setEmail(userDto.getEmail());
         return userRepository.save(user);
     }
 
-    private void validateUser(UserDto userDto) {
-        boolean existsByUsername = userRepository.existsByUsername(userDto.getUsername());
-        boolean existsByEmail = userRepository.existsByEmail(userDto.getEmail());
-        if(existsByEmail) {
-            throw new UserNotFoundException("User with this email already exists");
+    private void validateNewUser(UserDto userDto) {
+        if (userDto.getUsername() == null || userDto.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
         }
-        if(existsByUsername) {
-            throw new UserNotFoundException("User with this username already exists");
+        if (userDto.getEmail() == null || userDto.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        if (userRepository.existsByUsername(userDto.getUsername())) {
+            throw new UserAlreadyExistsException("User with this username already exists");
+        }
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            throw new UserAlreadyExistsException("User with this email already exists");
+        }
+    }
+
+    private void validateUpdateUser(User existingUser, UserDto userDto) {
+        if (userDto.getUsername() == null || userDto.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username cannot be empty");
+        }
+        if (userDto.getEmail() == null || userDto.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        User byUsername = userRepository.findByUsername(userDto.getUsername());
+        if (byUsername != null && !byUsername.getId().equals(existingUser.getId())) {
+            throw new UserAlreadyExistsException("User with this username already exists");
+        }
+        User byEmail = userRepository.findByEmail(userDto.getEmail());
+        if (byEmail != null && !byEmail.getId().equals(existingUser.getId())) {
+            throw new UserAlreadyExistsException("User with this email already exists");
         }
     }
 
     private String hashPassword(String password) {
-        if(password == null || password.trim().isEmpty()) {
+        if (password == null || password.trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be empty");
         }
-        return BCrypt.hashpw(password, BCrypt.gensalt());
+        return BCrypt.hashpw(password, BCrypt.gensalt(12));
     }
 }

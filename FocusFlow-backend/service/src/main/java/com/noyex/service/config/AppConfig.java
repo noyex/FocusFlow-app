@@ -2,8 +2,8 @@ package com.noyex.service.config;
 
 import com.noyex.data.repository.UserRepository;
 import org.springframework.context.annotation.Bean;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 public class AppConfig {
@@ -15,7 +15,7 @@ public class AppConfig {
     }
 
      @Bean
-     public BCryptPasswordEncoder passwordEncoder() {
-         return new BCryptPasswordEncoder();
+     public BCrypt passwordEncoder() {
+         return new BCrypt();
      }
 }

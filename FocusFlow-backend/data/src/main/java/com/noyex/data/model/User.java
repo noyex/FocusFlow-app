@@ -2,11 +2,9 @@ package com.noyex.data.model;
 
 import com.noyex.data.model.enums.Role;
 import jakarta.persistence.*;
-import lombok.Data;
 
-import java.util.HashSet;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -25,6 +23,9 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+
+    private LocalDateTime createdAt;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role = Role.USER;
@@ -32,14 +33,22 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
 
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
     public User() {
     }
 
-    public User(String username, String password, String email, Role role) {
+    public User(Long id, String username, String password, String email, LocalDateTime createdAt, Role role, List<Project> projects) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
+        this.createdAt = createdAt;
         this.role = role;
+        this.projects = projects;
     }
 
     public Long getId() {
@@ -88,5 +97,13 @@ public class User {
 
     public void setProjects(List<Project> projects) {
         this.projects = projects;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
