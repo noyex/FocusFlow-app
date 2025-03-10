@@ -1,5 +1,6 @@
 package com.noyex.auth.service;
 
+import com.noyex.data.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -35,7 +36,14 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
+        Map<String, Object> extraClaims = new HashMap<>();
+        if(userDetails instanceof User){
+            User user = (User) userDetails;
+            extraClaims.put("userId", user.getId());
+            extraClaims.put("email", user.getEmail());
+            extraClaims.put("role", user.getRole());
+        }
+        return generateToken(extraClaims, userDetails);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {

@@ -35,7 +35,7 @@ public class AuthenticationService {
     }
 
     public User signup(RegisterUserDto input) {
-        User user = new User(input.getUsername(), input.getEmail(), passwordEncoder.encode(input.getPassword()));
+        User user = new User(input.getUsername(), passwordEncoder.encode(input.getPassword()), input.getEmail());
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);
@@ -52,7 +52,7 @@ public class AuthenticationService {
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        input.getEmail(),
+                        user.getUsername(),
                         input.getPassword()
                 )
         );
@@ -113,9 +113,10 @@ public class AuthenticationService {
                 + "</html>";
 
         try {
+            System.out.println("Verification email sent to " + user.getEmail());
             emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
+
         } catch (MessagingException e) {
-            // Handle email sending exception
             e.printStackTrace();
         }
     }
