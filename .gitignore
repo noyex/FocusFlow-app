@@ -1,0 +1,42 @@
+# Pliki środowiskowe (np. .env)
+.env
+
+# Pliki buildów i artefaktów Maven
+target/
+*.jar
+*.war
+*.ear
+
+# Pliki konfiguracyjne IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Pliki logów
+*.log
+
+# Pliki tymczasowe i cache
+*.tmp
+*.bak
+*.swp
+*~
+.DS_Store
+
+# Foldery generowane przez Docker
+docker-compose.override.yml
+docker-compose.yml.bak
+
+# Pliki specyficzne dla bazy danych (lokalne dane)
+*.sql
+!/src/main/resources/data.sql  # Wyjątek dla domyślnych danych, jeśli masz taki plik
+
+# Pliki specyficzne dla iOS (jeśli zaczniesz frontend)
+xcuserdata/
+*.xcworkspace
+*.xcodeproj
+
+# Inne
+.classpath
+.project
+.settings/
