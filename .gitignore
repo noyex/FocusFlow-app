@@ -40,3 +40,4 @@ xcuserdata/
 .classpath
 .project
 .settings/
+*.env
