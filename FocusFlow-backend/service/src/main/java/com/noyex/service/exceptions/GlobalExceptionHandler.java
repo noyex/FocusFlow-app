@@ -31,4 +31,11 @@ public class GlobalExceptionHandler {
         response.put("message", e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTaskNotFoundException(TaskNotFoundException e) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
 }

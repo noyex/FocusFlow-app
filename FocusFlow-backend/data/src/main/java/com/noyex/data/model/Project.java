@@ -26,7 +26,7 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties({"projects", "password", "email", "verificationCode", "verificationCodeExpiresAt", "enabled", "role", "createdAt", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "authorities"})
+    @JsonIgnoreProperties({"projects", "password", "email", "verificationCode", "verificationCodeExpiresAt", "enabled", "role", "createdAt", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "authorities", "tasks"})
     private User user;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)

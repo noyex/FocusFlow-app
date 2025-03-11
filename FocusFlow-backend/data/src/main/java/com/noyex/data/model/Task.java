@@ -1,5 +1,6 @@
 package com.noyex.data.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.noyex.data.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,6 +20,7 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "project_id", nullable = false)
+    @JsonIgnoreProperties({"tasks", "status", "createdAt", "startDate", "endDate", "totalTasks", "completedTasks", "completed", "totalTime", "description"})
     private Project project;
 
     @Enumerated(EnumType.STRING)
