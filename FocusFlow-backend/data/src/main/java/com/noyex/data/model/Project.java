@@ -1,14 +1,17 @@
 package com.noyex.data.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.noyex.data.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
 @Table(name = "projects")
-
 public class Project {
 
     @Id
@@ -23,14 +26,19 @@ public class Project {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"projects", "password", "email", "verificationCode", "verificationCodeExpiresAt", "enabled", "role", "createdAt", "accountNonExpired", "accountNonLocked", "credentialsNonExpired", "authorities"})
     private User user;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status = Status.TO_DO;
 
-    @Column(name = "start_date", nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "start_date")
     private LocalDate startDate;
 
     @Column(name = "end_date")
@@ -50,12 +58,15 @@ public class Project {
     public Project() {
     }
 
-    public Project(String name, String description, User user, List<Task> tasks, String status, LocalDate startDate, LocalDate endDate, Integer totalTasks, Integer completedTasks, boolean completed, Long totalTime) {
+
+    public Project(Long id, String name, String description, User user, List<Task> tasks, Status status, LocalDateTime createdAt, LocalDate startDate, LocalDate endDate, Integer totalTasks, Integer completedTasks, boolean completed, Long totalTime) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.user = user;
         this.tasks = tasks;
         this.status = status;
+        this.createdAt = createdAt;
         this.startDate = startDate;
         this.endDate = endDate;
         this.totalTasks = totalTasks;
@@ -104,12 +115,20 @@ public class Project {
         this.tasks = tasks;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public LocalDate getStartDate() {
@@ -160,3 +179,4 @@ public class Project {
         this.totalTime = totalTime;
     }
 }
+
