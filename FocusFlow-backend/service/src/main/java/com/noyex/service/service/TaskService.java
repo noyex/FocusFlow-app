@@ -1,6 +1,7 @@
 package com.noyex.service.service;
 
 import com.noyex.data.model.DTOs.TaskDto;
+import com.noyex.data.model.DTOs.UpdateTaskDto;
 import com.noyex.data.model.DTOs.UserDto;
 import com.noyex.data.model.Project;
 import com.noyex.data.model.Task;
@@ -40,10 +41,14 @@ public class TaskService implements ITaskService{
         }
         if(user.isPresent()) {
             Task task = new Task();
+            Project existingProject = project.get();
             task.setName(taskDto.getName());
-            task.setProject(project.get());
+            task.setProject(existingProject);
             task.setCompleted(false);
             task.setEstimatedTime(taskDto.getEstimatedTime());
+
+            existingProject.setTotalTasks(existingProject.getTotalTasks() + 1);
+            projectRepository.save(existingProject);
 
             return taskRepository.save(task);
         } else {
@@ -61,7 +66,7 @@ public class TaskService implements ITaskService{
     }
 
     @Override
-    public Task updateTask(Long taskId, TaskDto taskDto) {
+    public Task updateTask(Long taskId, UpdateTaskDto taskDto) {
         Optional<Task> task = taskRepository.findById(taskId);
         if(task.isPresent()) {
             Task existingTask = task.get();
@@ -78,6 +83,11 @@ public class TaskService implements ITaskService{
     public void deleteTask(Long taskId) {
         Optional<Task> task = taskRepository.findById(taskId);
         if(task.isPresent()) {
+
+            Project project = task.get().getProject();
+            project.setTotalTasks(project.getTotalTasks() - 1);
+            projectRepository.save(project);
+
             taskRepository.deleteById(taskId);
         } else {
             throw new TaskNotFoundException("Task not found");

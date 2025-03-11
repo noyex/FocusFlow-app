@@ -30,6 +30,7 @@ public class Project {
     private User user;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnoreProperties({"project"})
     private List<Task> tasks;
 
     @Enumerated(EnumType.STRING)
