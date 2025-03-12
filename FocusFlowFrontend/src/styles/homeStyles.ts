@@ -34,6 +34,7 @@ export const homeStyles = StyleSheet.create({
     color: '#FFFFFF',
     marginBottom: 12,
     letterSpacing: -0.5,
+    fontFamily: Platform.OS === 'ios' ? '-apple-system' : undefined,
   },
   motto: {
     fontSize: 17,
@@ -42,6 +43,7 @@ export const homeStyles = StyleSheet.create({
     lineHeight: 24,
     maxWidth: '85%',
     marginBottom: 8,
+    fontFamily: Platform.OS === 'ios' ? '-apple-system' : undefined,
   },
   featuresContainer: {
     flexDirection: 'row',
@@ -63,6 +65,7 @@ export const homeStyles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 15,
     fontWeight: '500',
+    fontFamily: Platform.OS === 'ios' ? '-apple-system' : undefined,
   },
   buttonContainer: {
     width: '100%',
@@ -96,11 +99,13 @@ export const homeStyles = StyleSheet.create({
     color: '#000000',
     fontSize: 17,
     fontWeight: '600',
+    fontFamily: Platform.OS === 'ios' ? '-apple-system' : undefined,
   },
   secondaryButtonText: {
     color: '#FFFFFF',
     fontSize: 17,
     fontWeight: '600',
+    fontFamily: Platform.OS === 'ios' ? '-apple-system' : undefined,
   },
   blurOverlay: {
     ...StyleSheet.absoluteFillObject,
