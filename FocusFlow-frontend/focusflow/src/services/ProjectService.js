@@ -6,7 +6,7 @@ import { API_ENDPOINTS, getAuthHeaders } from './ApiConfig';
  */
 const ProjectService = {
   /**
-   * Fetches all user's projects
+   * Fetches all user's projects and tasks
    * @returns {Promise} Promise containing list of projects
    */
   getAllProjects: async () => {

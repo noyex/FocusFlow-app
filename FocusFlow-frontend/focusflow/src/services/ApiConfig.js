@@ -20,7 +20,7 @@ export const API_ENDPOINTS = {
   PROJECTS: {
     ALL: `${API_BASE_URL}/projects/all`,
     GET: (id) => `${API_BASE_URL}/projects/${id}`,
-    CREATE: `${API_BASE_URL}/projects`,
+    CREATE: `${API_BASE_URL}/projects/create`,
     UPDATE: (id) => `${API_BASE_URL}/projects/${id}`,
     DELETE: (id) => `${API_BASE_URL}/projects/${id}`
   },
@@ -29,7 +29,7 @@ export const API_ENDPOINTS = {
   TASKS: {
     BY_PROJECT: (projectId) => `${API_BASE_URL}/tasks/${projectId}`,
     GET: (taskId) => `${API_BASE_URL}/tasks/task/${taskId}`,
-    CREATE: (projectId) => `${API_BASE_URL}/tasks/${projectId}`,
+    CREATE: `${API_BASE_URL}/tasks/create`,
     UPDATE: (taskId) => `${API_BASE_URL}/tasks/task/${taskId}`,
     COMPLETE: (taskId) => `${API_BASE_URL}/tasks/task/${taskId}/complete`,
     DELETE: (taskId) => `${API_BASE_URL}/tasks/task/${taskId}`

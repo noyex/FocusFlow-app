@@ -68,10 +68,6 @@ const WorkspacePage = () => {
   const markTaskAsCompleted = (taskId, e) => {
     e.stopPropagation();
     
-    // Znajdź zadanie
-    const task = selectedProjectTasks.find(t => t.id === taskId);
-    if (!task) return;
-    
     // Aktualizacja lokalnego stanu zadania
     const updatedTasks = selectedProjectTasks.map(task => 
       task.id === taskId ? { ...task, completed: !task.completed } : task
@@ -80,14 +76,15 @@ const WorkspacePage = () => {
     setSelectedProjectTasks(updatedTasks);
     
     // Aktualizacja zadania w projekcie
+    const taskToUpdate = selectedProjectTasks.find(t => t.id === taskId);
     const updatedProjects = projects.map(project => 
       project.id === selectedProject.id 
         ? { 
             ...project, 
-            tasks: project.tasks.map(task => 
-              task.id === taskId ? { ...task, completed: !task.completed } : task
+            tasks: project.tasks.map(t => 
+              t.id === taskId ? { ...t, completed: !t.completed } : t
             ),
-            completedTasks: task.completed 
+            completedTasks: taskToUpdate.completed 
               ? project.completedTasks - 1 
               : project.completedTasks + 1
           } 
