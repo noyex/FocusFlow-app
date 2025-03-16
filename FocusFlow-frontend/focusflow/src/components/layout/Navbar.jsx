@@ -18,12 +18,15 @@ const Navbar = ({ navType = 'public' }) => {
     public: [
       { path: '/features', label: 'Features', isHashLink: false },
       { path: '/pricing', label: 'Pricing', isHashLink: false },
-      { path: '/#about', label: 'About', isHashLink: true }
+      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
+      { path: '/vision-mission', label: 'Our Mission', isHashLink: false },
+      { path: '/articles', label: 'Articles', isHashLink: false }
     ],
     dashboard: [
       { path: '/dashboard', label: 'Dashboard', isHashLink: false },
       { path: '/projects', label: 'Projects', isHashLink: false },
       { path: '/focus-tools', label: 'Focus Tools', isHashLink: false },
+      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
       { path: '/profile', label: 'Profile', isHashLink: false }
     ],
     profile: [
@@ -35,12 +38,33 @@ const Navbar = ({ navType = 'public' }) => {
     pricing: [
       { path: '/features', label: 'Features', isHashLink: false },
       { path: '/pricing', label: 'Pricing', isHashLink: false },
-      { path: '/#about', label: 'About', isHashLink: true }
+      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
+      { path: '/vision-mission', label: 'Our Mission', isHashLink: false }
     ],
     features: [
       { path: '/features', label: 'Features', isHashLink: false },
       { path: '/pricing', label: 'Pricing', isHashLink: false },
-      { path: '/#about', label: 'About', isHashLink: true }
+      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
+      { path: '/vision-mission', label: 'Our Mission', isHashLink: false }
+    ],
+    'vision-mission': [
+      { path: '/features', label: 'Features', isHashLink: false },
+      { path: '/pricing', label: 'Pricing', isHashLink: false },
+      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
+      { path: '/vision-mission', label: 'Our Mission', isHashLink: false },
+      { path: '/articles', label: 'Articles', isHashLink: false }
+    ],
+    articles: [
+      { path: '/features', label: 'Features', isHashLink: false },
+      { path: '/pricing', label: 'Pricing', isHashLink: false },
+      { path: '/how-it-works', label: 'How It Works', isHashLink: false }, 
+      { path: '/articles', label: 'Articles', isHashLink: false }
+    ],
+    'how-it-works': [
+      { path: '/features', label: 'Features', isHashLink: false },
+      { path: '/pricing', label: 'Pricing', isHashLink: false },
+      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
+      { path: '/vision-mission', label: 'Our Mission', isHashLink: false }
     ]
   };
   

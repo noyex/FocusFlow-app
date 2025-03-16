@@ -8,6 +8,9 @@ import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/ProfilePage';
 import PricingPage from './pages/PricingPage';
 import FeaturesPage from './pages/FeaturesPage';
+import VisionMissionPage from './pages/VisionMissionPage';
+import ArticlesPage from './pages/ArticlesPage';
+import HowItWorksPage from './pages/HowItWorksPage';
 import { isAuthenticated } from './services/AuthService';
 import './App.css';
 
@@ -30,6 +33,9 @@ function App() {
           <Route path="/verify" element={<VerificationPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/vision-mission" element={<VisionMissionPage />} />
+          <Route path="/articles" element={<ArticlesPage />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route 
             path="/dashboard" 
             element={
