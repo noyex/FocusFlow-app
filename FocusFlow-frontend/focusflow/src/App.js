@@ -6,6 +6,7 @@ import RegisterPage from './pages/RegisterPage';
 import VerificationPage from './pages/VerificationPage';
 import Dashboard from './pages/Dashboard';
 import ProfilePage from './pages/ProfilePage';
+import PricingPage from './pages/PricingPage';
 import { isAuthenticated } from './services/AuthService';
 import './App.css';
 
@@ -26,6 +27,7 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify" element={<VerificationPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
           <Route 
             path="/dashboard" 
             element={

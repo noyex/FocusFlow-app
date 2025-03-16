@@ -19,8 +19,8 @@ const LandingPage = () => {
             <Link to="/" className="logo">Focus Flow</Link>
             <div className="nav-links">
               <a href="#features">Features</a>
+              <Link to="/pricing">Pricing</Link>
               <a href="#about">About</a>
-              <a href="#pricing">Pricing</a>
             </div>
           </div>
           <div className="nav-buttons">
