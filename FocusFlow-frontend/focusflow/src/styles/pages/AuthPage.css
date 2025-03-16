@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #000000;
+  background: linear-gradient(135deg, #121212 0%, #1e1e2e 100%);
   padding: 20px;
 }
 
@@ -13,14 +13,14 @@
   display: flex;
   border-radius: 24px;
   overflow: hidden;
-  background: rgba(20, 20, 20, 0.9);
+  background: rgba(30, 30, 46, 0.9);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .auth-left {
   flex: 1;
   padding: 60px 40px;
-  background: linear-gradient(135deg, rgba(0, 122, 255, 0.2), rgba(90, 200, 250, 0.2));
+  background: linear-gradient(135deg, rgba(147, 112, 219, 0.2), rgba(177, 156, 217, 0.2));
   display: flex;
   flex-direction: column;
   justify-content: center;

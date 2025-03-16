@@ -51,15 +51,15 @@
 
 /* Styles for buttons outside nav */
 .button.primary:not(.nav .button) {
-  background: linear-gradient(to right, #007AFF, #5AC8FA);
+  background: linear-gradient(to right, #9370DB, #B19CD9);
   color: white;
-  box-shadow: 0 6px 12px rgba(0, 122, 255, 0.2);
+  box-shadow: 0 6px 12px rgba(147, 112, 219, 0.2);
 }
 
 .button.primary:not(.nav .button):hover {
-  background: linear-gradient(to right, #0066D6, #4AB8EA);
+  background: linear-gradient(to right, #8A65D0, #A08BCE);
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 122, 255, 0.3);
+  box-shadow: 0 8px 16px rgba(147, 112, 219, 0.3);
 }
 
 .button.secondary:not(.nav .button) {
