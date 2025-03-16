@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { isAuthenticated, logout } from '../services/AuthService';
 import '../styles/pages/LandingPage.css';
+import '../styles/components/Logo.css';
 
 const LandingPage = () => {
   const handleLogout = () => {

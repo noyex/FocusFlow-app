@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import { isAuthenticated, logout } from '../services/AuthService';
 import '../styles/pages/Dashboard.css';
+import '../styles/components/Logo.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();

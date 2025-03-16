@@ -45,20 +45,6 @@
   gap: 40px;
 }
 
-.dashboard .logo {
-  font-size: 24px;
-  font-weight: 700;
-  color: #FFFFFF;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.dashboard .logo:hover {
-  color: #FFFFFF;
-  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
-}
-
 .dashboard .nav-links {
   display: flex;
   gap: 24px;

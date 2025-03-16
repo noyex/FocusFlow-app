@@ -1,0 +1,56 @@
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background: linear-gradient(
+    90deg, 
+    #9370DB, 
+    #B19CD9, 
+    #9370DB, 
+    #7B68EE, 
+    #9370DB
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: gradient 3s linear infinite;
+  text-shadow: none;
+}
+
+.logo:hover {
+  animation: gradient 1.5s linear infinite;
+  transform: scale(1.05);
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Dla stopki */
+.footer-logo {
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(
+    90deg, 
+    #9370DB, 
+    #B19CD9, 
+    #9370DB, 
+    #7B68EE, 
+    #9370DB
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-fill-color: transparent;
+  animation: gradient 3s linear infinite;
+  margin-bottom: 10px;
+} 

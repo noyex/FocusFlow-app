@@ -5,6 +5,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Modal from '../components/ui/Modal';
 import '../styles/pages/ProfilePage.css';
+import '../styles/components/Logo.css';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
