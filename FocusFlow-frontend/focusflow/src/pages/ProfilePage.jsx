@@ -158,7 +158,7 @@ const ProfilePage = () => {
               </div>
 
               <div className="info-row centered-info">
-                <div className="info-label">Role</div>
+                <div className="info-label">Plan</div>
                 <div className="info-value">{userProfile?.role || 'User'}</div>
               </div>
             </div>

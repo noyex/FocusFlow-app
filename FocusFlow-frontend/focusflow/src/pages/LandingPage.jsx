@@ -29,17 +29,17 @@ const LandingPage = () => {
 
         <div className="features" id="features">
           <div className="feature-card">
-            <div className="feature-icon">📋</div>
+            <div className="card-icon">📋</div>
             <h3>Project Management</h3>
             <p>Organize your projects and tasks with intuitive tools and clear hierarchy.</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">⏱️</div>
+            <div className="card-icon">⏱️</div>
             <h3>Time Tracking</h3>
             <p>Monitor your productivity and track time spent on each task effortlessly.</p>
           </div>
           <div className="feature-card">
-            <div className="feature-icon">🎯</div>
+            <div className="card-icon">🎯</div>
             <h3>Focus Tools</h3>
             <p>Enhance your concentration with built-in Pomodoro timer and focus techniques.</p>
           </div>
