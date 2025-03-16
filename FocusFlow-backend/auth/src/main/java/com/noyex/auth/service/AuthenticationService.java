@@ -1,5 +1,6 @@
 package com.noyex.auth.service;
 
+import com.noyex.auth.exceptions.*;
 import com.noyex.data.model.DTOs.LoginUserDto;
 import com.noyex.data.model.DTOs.RegisterUserDto;
 import com.noyex.data.model.DTOs.VerifyUserDto;
@@ -35,6 +36,10 @@ public class AuthenticationService {
     }
 
     public User signup(RegisterUserDto input) {
+        Optional<User> existingUser = userRepository.findByEmail(input.getEmail());
+        if (existingUser.isPresent()) {
+            throw new EmailAlreadyInUseException("Email already in use");
+        }
         User user = new User(input.getUsername(), passwordEncoder.encode(input.getPassword()), input.getEmail());
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
@@ -45,10 +50,10 @@ public class AuthenticationService {
 
     public User authenticate(LoginUserDto input) {
         User user = userRepository.findByEmail(input.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!user.isEnabled()) {
-            throw new RuntimeException("Account not verified. Please verify your account.");
+            throw new AccountNotVerifiedException("Account not verified. Please verify your account.");
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -65,7 +70,7 @@ public class AuthenticationService {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now())) {
-                throw new RuntimeException("Verification code has expired");
+                throw new VerificationCodeExpiredException("Verification code has expired");
             }
             if (user.getVerificationCode().equals(input.getVerificationCode())) {
                 user.setEnabled(true);
@@ -73,10 +78,10 @@ public class AuthenticationService {
                 user.setVerificationCodeExpiresAt(null);
                 userRepository.save(user);
             } else {
-                throw new RuntimeException("Invalid verification code");
+                throw new InvalidVerificationCodeException("Invalid verification code");
             }
         } else {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
     }
 
@@ -92,21 +97,25 @@ public class AuthenticationService {
             sendVerificationEmail(user);
             userRepository.save(user);
         } else {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User not found");
         }
     }
 
     private void sendVerificationEmail(User user) {
-        String subject = "Account Verification";
+        String subject = "Focus Flow - Account Verification";
         String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
         String htmlMessage = "<html>"
-                + "<body style=\"font-family: Arial, sans-serif;\">"
-                + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                + "<h2 style=\"color: #333;\">Welcome to our app!</h2>"
-                + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
-                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-                + "<h3 style=\"color: #333;\">Verification Code:</h3>"
-                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                + "<body style=\"font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;\">"
+                + "<div style=\"background: linear-gradient(135deg, #121212 0%, #1e1e2e 100%); padding: 30px; color: #FFFFFF; border-radius: 24px;\">"
+                + "<h2 style=\"color: #FFFFFF; font-weight: 700; font-size: 28px;\">Welcome to Focus Flow!</h2>"
+                + "<p style=\"font-size: 16px; color: rgba(255, 255, 255, 0.8);\">Please enter the verification code below to activate your account:</p>"
+                + "<div style=\"background-color: rgba(30, 30, 46, 0.8); padding: 25px; border-radius: 16px; box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1);\">"
+                + "<h3 style=\"color: #FFFFFF; font-size: 18px; margin-bottom: 15px;\">Verification Code:</h3>"
+                + "<p style=\"font-size: 24px; font-weight: bold; background: linear-gradient(to right, #9370DB, #B19CD9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; padding: 10px 0;\">" + verificationCode + "</p>"
+                + "</div>"
+                + "<p style=\"font-size: 14px; color: rgba(255, 255, 255, 0.7); margin-top: 25px;\">This code will expire in 30 minutes. If you didn't request this verification, please ignore this email.</p>"
+                + "<div style=\"margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1);\">"
+                + "<p style=\"font-size: 14px; color: rgba(255, 255, 255, 0.6);\">© " + java.time.Year.now().getValue() + " Focus Flow. All rights reserved.</p>"
                 + "</div>"
                 + "</div>"
                 + "</body>"
