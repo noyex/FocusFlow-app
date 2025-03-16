@@ -124,4 +124,22 @@
 .form-footer a:hover {
   color: #B19CD9;
   text-decoration: underline;
+}
+
+/* Style dla pola wejściowego z błędem */
+.form-group input.error {
+  border-color: #FF3B30;
+  background-color: rgba(255, 59, 48, 0.05);
+  box-shadow: 0 0 0 1px rgba(255, 59, 48, 0.2);
+}
+
+.form-group input.error:focus {
+  box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.2);
+}
+
+.input-error {
+  color: #FF3B30;
+  font-size: 12px;
+  margin-top: 6px;
+  padding-left: 4px;
 } 

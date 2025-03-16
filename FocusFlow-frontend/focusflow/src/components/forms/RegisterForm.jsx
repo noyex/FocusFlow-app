@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Button from '../ui/Button';
+import BackButton from '../ui/BackButton';
 import { register } from '../../services/AuthService';
 import '../../styles/components/Form.css';
 
@@ -10,12 +11,16 @@ const RegisterForm = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [usernameError, setUsernameError] = useState('');
   
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setEmailError('');
+    setUsernameError('');
     setLoading(true);
     
     try {
@@ -24,7 +29,18 @@ const RegisterForm = () => {
       localStorage.setItem('registeredEmail', email);
       navigate('/verify');
     } catch (error) {
-      setError('Registration failed. Please try again.');
+      console.error('Registration error in component:', error);
+      
+      // Check for specific error messages
+      const errorMessage = error.message || '';
+      
+      if (errorMessage.toLowerCase().includes('email')) {
+        setEmailError(errorMessage);
+      } else if (errorMessage.toLowerCase().includes('username')) {
+        setUsernameError(errorMessage);
+      } else {
+        setError(errorMessage || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -32,6 +48,7 @@ const RegisterForm = () => {
 
   return (
     <div className="form-container">
+      <BackButton />
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Create your account</h2>
         <p className="form-subtitle">Start managing your time and projects with Focus Flow</p>
@@ -44,10 +61,15 @@ const RegisterForm = () => {
             type="text"
             id="username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              setUsernameError(''); // Clear username error when user types
+            }}
             placeholder="Enter username"
+            className={usernameError ? 'error' : ''}
             required
           />
+          {usernameError && <div className="input-error">{usernameError}</div>}
         </div>
         
         <div className="form-group">
@@ -56,10 +78,15 @@ const RegisterForm = () => {
             type="email"
             id="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailError(''); // Clear email error when user types
+            }}
             placeholder="Enter email"
+            className={emailError ? 'error' : ''}
             required
           />
+          {emailError && <div className="input-error">{emailError}</div>}
         </div>
         
         <div className="form-group">
@@ -79,7 +106,7 @@ const RegisterForm = () => {
         </Button>
         
         <div className="form-footer">
-          Already have an account? <a href="/login">Sign In</a>
+          Already have an account? <Link to="/login">Sign In</Link>
         </div>
       </form>
     </div>

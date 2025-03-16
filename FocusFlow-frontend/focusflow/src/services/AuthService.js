@@ -10,8 +10,21 @@ export const register = async (username, email, password) => {
       body: JSON.stringify({ username, email, password }),
     });
     
+    // Log status code to debug
+    console.log('Registration response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error('Registration failed');
+      // Try to get the response as JSON
+      const errorData = await response.json();
+      console.log('Error response:', errorData);
+      
+      // If we have a message in the response, use it
+      if (errorData && errorData.message) {
+        throw new Error(errorData.message);
+      } else {
+        // Fallback error message
+        throw new Error(`Registration failed with status: ${response.status}`);
+      }
     }
     
     return await response.json();
@@ -75,8 +88,26 @@ export const login = async (email, password) => {
       body: JSON.stringify({ email, password }),
     });
     
+    // Log status code to debug
+    console.log('Login response status:', response.status);
+    
     if (!response.ok) {
-      throw new Error('Login failed');
+      // Try to get the response as JSON
+      try {
+        const errorData = await response.json();
+        console.log('Login error response:', errorData);
+        
+        // If we have a message in the response, use it
+        if (errorData && errorData.message) {
+          throw new Error(errorData.message);
+        }
+      } catch (e) {
+        // If we can't parse the error JSON
+        console.log('Could not parse login error response as JSON');
+      }
+      
+      // Fallback error message
+      throw new Error('Invalid email or password. Please try again.');
     }
     
     const data = await response.json();

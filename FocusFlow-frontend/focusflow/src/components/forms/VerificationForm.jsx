@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
+import BackButton from '../ui/BackButton';
 import { verifyAccount, resendVerificationCode } from '../../services/AuthService';
 import '../../styles/components/Form.css';
 
@@ -108,6 +109,7 @@ const VerificationForm = () => {
 
   return (
     <div className="form-container">
+      <BackButton />
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Verify Your Account</h2>
         <p className="form-subtitle">Enter the 6-digit code sent to your email</p>

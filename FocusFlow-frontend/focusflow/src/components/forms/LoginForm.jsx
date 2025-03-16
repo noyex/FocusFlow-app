@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Button from '../ui/Button';
+import BackButton from '../ui/BackButton';
 import { login } from '../../services/AuthService';
 import '../../styles/components/Form.css';
 
@@ -21,7 +22,8 @@ const LoginForm = () => {
       await login(email, password);
       navigate('/dashboard');
     } catch (error) {
-      setError('Invalid email or password. Please try again.');
+      console.error('Login error in component:', error);
+      setError(error.message || 'Invalid email or password. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -29,6 +31,7 @@ const LoginForm = () => {
 
   return (
     <div className="form-container">
+      <BackButton />
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Welcome Back</h2>
         <p className="form-subtitle">Sign in to continue to Focus Flow</p>
@@ -64,7 +67,7 @@ const LoginForm = () => {
         </Button>
         
         <div className="form-footer">
-          Don't have an account? <a href="/register">Sign Up</a>
+          Don't have an account? <Link to="/register">Sign Up</Link>
         </div>
       </form>
     </div>
