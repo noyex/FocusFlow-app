@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
-import { verifyAccount } from '../../services/AuthService';
+import { verifyAccount, resendVerificationCode } from '../../services/AuthService';
 import '../../styles/components/Form.css';
 
 const VerificationForm = () => {
@@ -10,6 +10,8 @@ const VerificationForm = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
   
   const navigate = useNavigate();
 
@@ -35,6 +37,17 @@ const VerificationForm = () => {
       return () => clearTimeout(timer);
     }
   }, [success, navigate]);
+
+  // Add a useEffect to reset resendSuccess after 3 seconds
+  useEffect(() => {
+    if (resendSuccess) {
+      const timer = setTimeout(() => {
+        setResendSuccess(false);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [resendSuccess]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,6 +84,28 @@ const VerificationForm = () => {
     }
   };
 
+  const handleResendCode = async (e) => {
+    e.preventDefault();
+    
+    if (!email) {
+      setError('Email is required to resend verification code');
+      return;
+    }
+    
+    setResendLoading(true);
+    setError('');
+    
+    try {
+      await resendVerificationCode(email);
+      setResendSuccess(true);
+    } catch (error) {
+      setError('Failed to resend verification code. Please try again.');
+      console.error('Resend verification code error:', error);
+    } finally {
+      setResendLoading(false);
+    }
+  };
+
   return (
     <div className="form-container">
       <form className="auth-form" onSubmit={handleSubmit}>
@@ -79,6 +114,7 @@ const VerificationForm = () => {
         
         {error && <div className="error-message">{error}</div>}
         {success && <div className="success-message">Account verified successfully! Redirecting to login...</div>}
+        {resendSuccess && <div className="success-message">Verification code resent successfully!</div>}
         
         <div className="form-group">
           <label htmlFor="email">Email</label>
@@ -111,7 +147,14 @@ const VerificationForm = () => {
         </Button>
         
         <div className="form-footer">
-          Didn't receive the code? <a href="#" onClick={() => alert('Feature not implemented yet')}>Resend Code</a>
+          Didn't receive the code? 
+          <a 
+            href="#" 
+            onClick={handleResendCode}
+            style={{ pointerEvents: resendLoading ? 'none' : 'auto' }}
+          >
+            {resendLoading ? 'Sending...' : 'Resend Code'}
+          </a>
         </div>
       </form>
     </div>

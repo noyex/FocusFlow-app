@@ -140,3 +140,39 @@ export const getUserProfile = async () => {
     throw error;
   }
 };
+
+export const resendVerificationCode = async (email) => {
+  try {
+    console.log('Resending verification code for:', email);
+    
+    const response = await fetch(`${API_URL}/resend`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+      body: email,
+    });
+    
+    // Log status code to debug
+    console.log('Resend verification code response status:', response.status);
+    
+    // If status is 200 (or 2xx range), consider it a success
+    if (response.status >= 200 && response.status < 300) {
+      console.log('Verification code resent successfully');
+      return { success: true, message: 'Verification code resent successfully' };
+    }
+    
+    // If we reach here, it's an error
+    try {
+      const errorData = await response.text();
+      console.error('Resend verification code failed with response:', errorData);
+      throw new Error(errorData || 'Failed to resend verification code');
+    } catch (e) {
+      // If we can't parse the error response
+      throw new Error(`Failed to resend verification code with status: ${response.status}`);
+    }
+  } catch (error) {
+    console.error('Resend verification code error:', error);
+    throw error;
+  }
+};

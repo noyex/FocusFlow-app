@@ -8,7 +8,6 @@ const LoginPage = () => {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-left">
-          <Link to="/" className="auth-logo">Focus Flow</Link>
           <h1>Welcome Back</h1>
           <p>Sign in to access your projects and continue improving your productivity.</p>
         </div>
