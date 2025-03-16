@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import '../styles/pages/LandingPage.css';
 
@@ -16,8 +17,12 @@ const LandingPage = () => {
             </div>
           </div>
           <div className="nav-buttons">
-            <Button variant="secondary">Sign In</Button>
-            <Button variant="primary">Sign Up</Button>
+            <Link to="/login">
+              <Button variant="secondary">Sign In</Button>
+            </Link>
+            <Link to="/register">
+              <Button variant="primary">Sign Up</Button>
+            </Link>
           </div>
         </nav>
       </div>
@@ -30,8 +35,12 @@ const LandingPage = () => {
             and time tracking tool designed for peak productivity.
           </p>
           <div className="cta-buttons">
-            <Button variant="primary">Get Started</Button>
-            <Button variant="secondary">Learn More</Button>
+            <Link to="/register">
+              <Button variant="primary">Get Started</Button>
+            </Link>
+            <a href="#features">
+              <Button variant="secondary">Learn More</Button>
+            </a>
           </div>
         </div>
 

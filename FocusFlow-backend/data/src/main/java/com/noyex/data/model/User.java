@@ -1,5 +1,7 @@
 package com.noyex.data.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.noyex.data.model.enums.Role;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -23,6 +25,7 @@ public class User implements UserDetails {
     private String username;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String password;
 
     @Column(nullable = false)
