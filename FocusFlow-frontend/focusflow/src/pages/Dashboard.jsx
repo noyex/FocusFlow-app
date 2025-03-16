@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import Navbar from '../components/layout/Navbar';
 import { isAuthenticated, logout } from '../services/AuthService';
 import '../styles/pages/Dashboard.css';
 import '../styles/components/Logo.css';
@@ -22,24 +23,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <div className="nav-container">
-        <nav className="nav dynamic-island">
-          <div className="nav-left">
-            <Link to="/" className="logo">Focus Flow</Link>
-            <div className="nav-links">
-              <a href="#dashboard" className="active">Dashboard</a>
-              <a href="#projects">Projects</a>
-              <a href="#focus-tools">Focus Tools</a>
-            </div>
-          </div>
-          <div className="nav-buttons">
-            <Link to="/profile" className="profile-link">Profile</Link>
-            <Button variant="secondary" onClick={handleLogout}>
-              Log Out
-            </Button>
-          </div>
-        </nav>
-      </div>
+      <Navbar navType="dashboard" />
 
       <main className="dashboard-content">
         <div className="welcome-section">

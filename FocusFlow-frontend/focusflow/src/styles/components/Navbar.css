@@ -1,0 +1,100 @@
+.nav-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 15px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: transparent;
+}
+
+.dynamic-island {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  max-width: 1200px;
+  padding: 10px 25px;
+  background-color: rgba(30, 30, 42, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: #a9a9c0;
+  text-decoration: none;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: #ffffff;
+}
+
+.nav-links a:after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background: linear-gradient(90deg, #7D4CDB, #B66DFF);
+  transition: width 0.3s ease;
+  border-radius: 2px;
+}
+
+.nav-links a:hover:after, .nav-links a.active:after {
+  width: 100%;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+@media (max-width: 768px) {
+  .dynamic-island {
+    width: 95%;
+    padding: 10px 15px;
+  }
+  
+  .nav-left {
+    gap: 15px;
+  }
+  
+  .nav-links {
+    display: none;
+  }
+  
+  /* Można tu później dodać style dla menu mobilnego */
+}
+
+@media (max-width: 480px) {
+  .dynamic-island {
+    border-radius: 25px;
+    padding: 8px 12px;
+  }
+  
+  .nav-buttons button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+} 

@@ -4,6 +4,7 @@ import { getUserProfile } from '../services/AuthService';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Modal from '../components/ui/Modal';
+import Navbar from '../components/layout/Navbar';
 import '../styles/pages/ProfilePage.css';
 import '../styles/components/Logo.css';
 
@@ -77,19 +78,7 @@ const ProfilePage = () => {
   if (loading) {
     return (
       <div className="dashboard">
-        <div className="nav-container">
-          <nav className="nav dynamic-island">
-            <div className="nav-left">
-              <Link to="/" className="logo">Focus Flow</Link>
-              <div className="nav-links">
-                <Link to="/dashboard">Dashboard</Link>
-                <a href="#projects">Projects</a>
-                <a href="#focus-tools">Focus Tools</a>
-                <Link to="/profile" className="active">Profile</Link>
-              </div>
-            </div>
-          </nav>
-        </div>
+        <Navbar navType="profile" />
         <main className="dashboard-content">
           <div className="profile-container">
             <div className="profile-loading">
@@ -104,19 +93,7 @@ const ProfilePage = () => {
   if (error) {
     return (
       <div className="dashboard">
-        <div className="nav-container">
-          <nav className="nav dynamic-island">
-            <div className="nav-left">
-              <Link to="/" className="logo">Focus Flow</Link>
-              <div className="nav-links">
-                <Link to="/dashboard">Dashboard</Link>
-                <a href="#projects">Projects</a>
-                <a href="#focus-tools">Focus Tools</a>
-                <Link to="/profile" className="active">Profile</Link>
-              </div>
-            </div>
-          </nav>
-        </div>
+        <Navbar navType="profile" />
         <main className="dashboard-content">
           <div className="profile-container">
             <div className="profile-error">
@@ -137,28 +114,7 @@ const ProfilePage = () => {
 
   return (
     <div className="dashboard">
-      <div className="nav-container">
-        <nav className="nav dynamic-island">
-          <div className="nav-left">
-            <Link to="/" className="logo">Focus Flow</Link>
-            <div className="nav-links">
-              <Link to="/dashboard">Dashboard</Link>
-              <a href="#projects">Projects</a>
-              <a href="#focus-tools">Focus Tools</a>
-              <Link to="/profile" className="active">Profile</Link>
-            </div>
-          </div>
-          <div className="nav-buttons">
-            <Link to="/profile" className="profile-link">Profile</Link>
-            <Button variant="secondary" onClick={() => {
-              localStorage.removeItem('token');
-              navigate('/');
-            }}>
-              Log Out
-            </Button>
-          </div>
-        </nav>
-      </div>
+      <Navbar navType="profile" />
 
       <main className="dashboard-content">
         <div className="profile-container">

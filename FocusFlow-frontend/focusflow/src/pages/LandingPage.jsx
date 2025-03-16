@@ -1,51 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
-import { isAuthenticated, logout } from '../services/AuthService';
+import Navbar from '../components/layout/Navbar';
 import '../styles/pages/LandingPage.css';
 import '../styles/components/Logo.css';
 
 const LandingPage = () => {
-  const handleLogout = () => {
-    logout();
-    window.location.reload();
-  };
-
   return (
     <div className="landing-page">
-      <div className="nav-container">
-        <nav className="nav dynamic-island">
-          <div className="nav-left">
-            <Link to="/" className="logo">Focus Flow</Link>
-            <div className="nav-links">
-              <a href="#features">Features</a>
-              <Link to="/pricing">Pricing</Link>
-              <a href="#about">About</a>
-            </div>
-          </div>
-          <div className="nav-buttons">
-            {isAuthenticated() ? (
-              <>
-                <Link to="/dashboard">
-                  <Button variant="primary">Dashboard</Button>
-                </Link>
-                <Button variant="secondary" onClick={handleLogout}>
-                  Log Out
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="secondary">Sign In</Button>
-                </Link>
-                <Link to="/register">
-                  <Button variant="primary">Sign Up</Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </nav>
-      </div>
+      <Navbar navType="public" />
       
       <main className="main-content">
         <div className="hero-section">

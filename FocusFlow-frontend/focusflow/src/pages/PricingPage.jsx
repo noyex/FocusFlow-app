@@ -1,51 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
-import { isAuthenticated, logout } from '../services/AuthService';
+import { logout } from '../services/AuthService';
+import Navbar from '../components/layout/Navbar';
 import '../styles/pages/PricingPage.css';
 import '../styles/components/Logo.css';
 
 const PricingPage = () => {
-  const handleLogout = () => {
-    logout();
-    window.location.reload();
-  };
+  // const handleLogout = () => {
+  //   logout();
+  //   window.location.reload();
+  // };
 
   return (
     <div className="pricing-page">
-      <div className="nav-container">
-        <nav className="nav dynamic-island">
-          <div className="nav-left">
-            <Link to="/" className="logo">Focus Flow</Link>
-            <div className="nav-links">
-              <a href="/#features">Features</a>
-              <Link to="/pricing" className="active">Pricing</Link>
-              <a href="/#about">About</a>
-            </div>
-          </div>
-          <div className="nav-buttons">
-            {isAuthenticated() ? (
-              <>
-                <Link to="/dashboard">
-                  <Button variant="primary">Dashboard</Button>
-                </Link>
-                <Button variant="secondary" onClick={handleLogout}>
-                  Log Out
-                </Button>
-              </>
-            ) : (
-              <>
-                <Link to="/login">
-                  <Button variant="secondary">Sign In</Button>
-                </Link>
-                <Link to="/register">
-                  <Button variant="primary">Sign Up</Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </nav>
-      </div>
+      <Navbar navType="pricing" />
       
       <main className="pricing-content">
         <div className="pricing-header">
