@@ -5,6 +5,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerificationPage from './pages/VerificationPage';
 import Dashboard from './pages/Dashboard';
+import ProfilePage from './pages/ProfilePage';
 import { isAuthenticated } from './services/AuthService';
 import './App.css';
 
@@ -30,6 +31,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/profile" 
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             } 
           />

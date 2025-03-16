@@ -32,7 +32,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="nav-buttons">
-            <a href="#profile" className="profile-link">Profile</a>
+            <Link to="/profile" className="profile-link">Profile</Link>
             <Button variant="secondary" onClick={handleLogout}>
               Log Out
             </Button>

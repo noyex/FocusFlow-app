@@ -1,0 +1,71 @@
+.input-container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.input-container label {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.input-container input {
+  background-color: rgba(30, 30, 30, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: white;
+  transition: all 0.2s ease;
+}
+
+.input-container input:focus {
+  outline: none;
+  border-color: #007AFF;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2);
+}
+
+.input-container input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.input-container input.error {
+  border-color: #FF3B30;
+}
+
+.input-container .input-error {
+  color: #FF3B30;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.input-container input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Styles for different input types */
+.input-container input[type="date"],
+.input-container input[type="time"],
+.input-container input[type="datetime-local"] {
+  color-scheme: dark;
+}
+
+.input-container input[type="checkbox"],
+.input-container input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+/* For iOS-like appearance */
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  .input-container input {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background-color: rgba(30, 30, 30, 0.6);
+  }
+} 
