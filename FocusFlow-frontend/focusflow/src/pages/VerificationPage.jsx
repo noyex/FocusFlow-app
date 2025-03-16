@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import VerificationForm from '../components/forms/VerificationForm';
 import '../styles/pages/AuthPage.css';
 
@@ -7,7 +8,7 @@ const VerificationPage = () => {
     <div className="auth-page">
       <div className="auth-container">
         <div className="auth-left">
-          <div className="auth-logo">Focus Flow</div>
+          <Link to="/" className="auth-logo">Focus Flow</Link>
           <h1>Almost There!</h1>
           <p>Verify your email to activate your account and start using Focus Flow.</p>
         </div>

@@ -24,7 +24,7 @@ const Dashboard = () => {
       <div className="nav-container">
         <nav className="nav dynamic-island">
           <div className="nav-left">
-            <div className="logo">Focus Flow</div>
+            <Link to="/" className="logo">Focus Flow</Link>
             <div className="nav-links">
               <a href="#dashboard" className="active">Dashboard</a>
               <a href="#projects">Projects</a>

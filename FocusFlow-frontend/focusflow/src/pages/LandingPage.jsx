@@ -1,15 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import { isAuthenticated, logout } from '../services/AuthService';
 import '../styles/pages/LandingPage.css';
 
 const LandingPage = () => {
+  const handleLogout = () => {
+    logout();
+    window.location.reload();
+  };
+
   return (
     <div className="landing-page">
       <div className="nav-container">
         <nav className="nav dynamic-island">
           <div className="nav-left">
-            <div className="logo">Focus Flow</div>
+            <Link to="/" className="logo">Focus Flow</Link>
             <div className="nav-links">
               <a href="#features">Features</a>
               <a href="#about">About</a>
@@ -17,12 +23,25 @@ const LandingPage = () => {
             </div>
           </div>
           <div className="nav-buttons">
-            <Link to="/login">
-              <Button variant="secondary">Sign In</Button>
-            </Link>
-            <Link to="/register">
-              <Button variant="primary">Sign Up</Button>
-            </Link>
+            {isAuthenticated() ? (
+              <>
+                <Link to="/dashboard">
+                  <Button variant="primary">Dashboard</Button>
+                </Link>
+                <Button variant="secondary" onClick={handleLogout}>
+                  Log Out
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <Button variant="secondary">Sign In</Button>
+                </Link>
+                <Link to="/register">
+                  <Button variant="primary">Sign Up</Button>
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </div>

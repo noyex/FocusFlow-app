@@ -79,7 +79,7 @@ const ProfilePage = () => {
         <div className="nav-container">
           <nav className="nav dynamic-island">
             <div className="nav-left">
-              <div className="logo">Focus Flow</div>
+              <Link to="/" className="logo">Focus Flow</Link>
               <div className="nav-links">
                 <Link to="/dashboard">Dashboard</Link>
                 <a href="#projects">Projects</a>
@@ -106,7 +106,7 @@ const ProfilePage = () => {
         <div className="nav-container">
           <nav className="nav dynamic-island">
             <div className="nav-left">
-              <div className="logo">Focus Flow</div>
+              <Link to="/" className="logo">Focus Flow</Link>
               <div className="nav-links">
                 <Link to="/dashboard">Dashboard</Link>
                 <a href="#projects">Projects</a>
@@ -139,7 +139,7 @@ const ProfilePage = () => {
       <div className="nav-container">
         <nav className="nav dynamic-island">
           <div className="nav-left">
-            <div className="logo">Focus Flow</div>
+            <Link to="/" className="logo">Focus Flow</Link>
             <div className="nav-links">
               <Link to="/dashboard">Dashboard</Link>
               <a href="#projects">Projects</a>
