@@ -19,7 +19,7 @@ const LandingPage = () => {
           </p>
           <div className="cta-buttons">
             <Link to="/register">
-              <Button variant="primary">Get Started</Button>
+              <Button variant="primary">Get Started for Free!</Button>
             </Link>
             <Link to="/features">
               <Button variant="secondary">Learn More</Button>
