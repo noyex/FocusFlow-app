@@ -11,6 +11,7 @@ import FeaturesPage from './pages/FeaturesPage';
 import VisionMissionPage from './pages/VisionMissionPage';
 import ArticlesPage from './pages/ArticlesPage';
 import HowItWorksPage from './pages/HowItWorksPage';
+import WorkspacePage from './pages/WorkspacePage';
 import { isAuthenticated } from './services/AuthService';
 import './App.css';
 
@@ -41,6 +42,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/workspace" 
+            element={
+              <ProtectedRoute>
+                <WorkspacePage />
               </ProtectedRoute>
             } 
           />

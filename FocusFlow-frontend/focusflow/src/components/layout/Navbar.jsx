@@ -24,6 +24,7 @@ const Navbar = ({ navType = 'public' }) => {
     ],
     dashboard: [
       { path: '/dashboard', label: 'Dashboard', isHashLink: false },
+      { path: '/workspace', label: 'Workspace', isHashLink: false },
       { path: '/projects', label: 'Projects', isHashLink: false },
       { path: '/focus-tools', label: 'Focus Tools', isHashLink: false },
       { path: '/how-it-works', label: 'How It Works', isHashLink: false },
@@ -31,6 +32,7 @@ const Navbar = ({ navType = 'public' }) => {
     ],
     profile: [
       { path: '/dashboard', label: 'Dashboard', isHashLink: false },
+      { path: '/workspace', label: 'Workspace', isHashLink: false },
       { path: '/projects', label: 'Projects', isHashLink: false },
       { path: '/focus-tools', label: 'Focus Tools', isHashLink: false },
       { path: '/profile', label: 'Profile', isHashLink: false }
