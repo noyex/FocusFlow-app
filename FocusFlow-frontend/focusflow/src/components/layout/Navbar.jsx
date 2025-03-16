@@ -16,7 +16,7 @@ const Navbar = ({ navType = 'public' }) => {
   // Define navigation links for different contexts
   const navLinks = {
     public: [
-      { path: '/#features', label: 'Features', isHashLink: true },
+      { path: '/features', label: 'Features', isHashLink: false },
       { path: '/pricing', label: 'Pricing', isHashLink: false },
       { path: '/#about', label: 'About', isHashLink: true }
     ],
@@ -33,7 +33,12 @@ const Navbar = ({ navType = 'public' }) => {
       { path: '/profile', label: 'Profile', isHashLink: false }
     ],
     pricing: [
-      { path: '/#features', label: 'Features', isHashLink: true },
+      { path: '/features', label: 'Features', isHashLink: false },
+      { path: '/pricing', label: 'Pricing', isHashLink: false },
+      { path: '/#about', label: 'About', isHashLink: true }
+    ],
+    features: [
+      { path: '/features', label: 'Features', isHashLink: false },
       { path: '/pricing', label: 'Pricing', isHashLink: false },
       { path: '/#about', label: 'About', isHashLink: true }
     ]

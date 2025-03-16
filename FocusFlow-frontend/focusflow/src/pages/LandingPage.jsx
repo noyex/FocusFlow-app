@@ -21,9 +21,9 @@ const LandingPage = () => {
             <Link to="/register">
               <Button variant="primary">Get Started</Button>
             </Link>
-            <a href="#features">
+            <Link to="/features">
               <Button variant="secondary">Learn More</Button>
-            </a>
+            </Link>
           </div>
         </div>
 
