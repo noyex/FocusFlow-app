@@ -52,4 +52,11 @@ public class GlobalExceptionHandlerAuth {
         response.put("message", e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(UsernameAlreadyInUseException.class)
+    public ResponseEntity<Map<String, String>> usernameAlreadyInUseException(UsernameAlreadyInUseException e) {
+        Map<String, String> response = new HashMap<>();
+        response.put("message", e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+    }
 }

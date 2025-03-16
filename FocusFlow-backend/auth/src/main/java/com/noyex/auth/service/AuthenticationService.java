@@ -40,6 +40,10 @@ public class AuthenticationService {
         if (existingUser.isPresent()) {
             throw new EmailAlreadyInUseException("Email already in use");
         }
+        if (userRepository.existsByUsername(input.getUsername())) {
+            throw new UsernameAlreadyInUseException("Username already in use");
+        }
+
         User user = new User(input.getUsername(), passwordEncoder.encode(input.getPassword()), input.getEmail());
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
