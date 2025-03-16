@@ -1,7 +1,7 @@
 package com.noyex.data.model.enums;
 
-public enum Role {
-    USER,
-    PREMIUM_USER,
+public enum Plan {
+    FREE,
+    ULTRA_FOCUS,
     ADMIN
 }

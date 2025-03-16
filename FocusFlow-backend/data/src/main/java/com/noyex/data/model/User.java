@@ -1,11 +1,8 @@
 package com.noyex.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.noyex.data.model.enums.Role;
+import com.noyex.data.model.enums.Plan;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,7 +40,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.USER;
+    private Plan plan = Plan.FREE;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Project> projects;
@@ -84,7 +81,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + this.plan.name()));
     }
 
     @Override
@@ -149,12 +146,12 @@ public class User implements UserDetails {
         this.createdAt = createdAt;
     }
 
-    public Role getRole() {
-        return role;
+    public Plan getRole() {
+        return plan;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRole(Plan plan) {
+        this.plan = plan;
     }
 
     public List<Project> getProjects() {
