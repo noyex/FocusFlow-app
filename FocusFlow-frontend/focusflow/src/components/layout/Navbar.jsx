@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import Button from '../ui/Button';
 import { isAuthenticated, logout } from '../../services/AuthService';
@@ -7,79 +7,48 @@ import '../../styles/components/Logo.css';
 
 const Navbar = ({ navType = 'public' }) => {
   const location = useLocation();
+  const [authenticated, setAuthenticated] = useState(false);
+  
+  useEffect(() => {
+    // Sprawdź autoryzację przy montowaniu i zmianie ścieżki
+    setAuthenticated(isAuthenticated());
+  }, [location.pathname]);
   
   const handleLogout = () => {
     logout();
     window.location.href = '/';
   };
   
-  // Define navigation links for different contexts
+  // Zdefiniuj linki nawigacyjne dla dwóch przypadków - z autoryzacją i bez
   const navLinks = {
-    public: [
+    // Linki dla użytkowników niezalogowanych (strony publiczne)
+    unauthenticated: [
       { path: '/features', label: 'Features', isHashLink: false },
       { path: '/pricing', label: 'Pricing', isHashLink: false },
       { path: '/how-it-works', label: 'How It Works', isHashLink: false },
       { path: '/vision-mission', label: 'Our Mission', isHashLink: false },
       { path: '/articles', label: 'Articles', isHashLink: false }
     ],
-    dashboard: [
-      { path: '/dashboard', label: 'Dashboard', isHashLink: false },
-      { path: '/workspace', label: 'Workspace', isHashLink: false },
-      { path: '/projects', label: 'Projects', isHashLink: false },
-      { path: '/focus-tools', label: 'Focus Tools', isHashLink: false },
-      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
-      { path: '/profile', label: 'Profile', isHashLink: false }
-    ],
-    profile: [
+    // Linki dla użytkowników zalogowanych (strony wymagające autoryzacji)
+    authenticated: [
       { path: '/dashboard', label: 'Dashboard', isHashLink: false },
       { path: '/workspace', label: 'Workspace', isHashLink: false },
       { path: '/projects', label: 'Projects', isHashLink: false },
       { path: '/focus-tools', label: 'Focus Tools', isHashLink: false },
       { path: '/profile', label: 'Profile', isHashLink: false }
-    ],
-    pricing: [
-      { path: '/features', label: 'Features', isHashLink: false },
-      { path: '/pricing', label: 'Pricing', isHashLink: false },
-      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
-      { path: '/vision-mission', label: 'Our Mission', isHashLink: false }
-    ],
-    features: [
-      { path: '/features', label: 'Features', isHashLink: false },
-      { path: '/pricing', label: 'Pricing', isHashLink: false },
-      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
-      { path: '/vision-mission', label: 'Our Mission', isHashLink: false }
-    ],
-    'vision-mission': [
-      { path: '/features', label: 'Features', isHashLink: false },
-      { path: '/pricing', label: 'Pricing', isHashLink: false },
-      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
-      { path: '/vision-mission', label: 'Our Mission', isHashLink: false },
-      { path: '/articles', label: 'Articles', isHashLink: false }
-    ],
-    articles: [
-      { path: '/features', label: 'Features', isHashLink: false },
-      { path: '/pricing', label: 'Pricing', isHashLink: false },
-      { path: '/how-it-works', label: 'How It Works', isHashLink: false }, 
-      { path: '/articles', label: 'Articles', isHashLink: false }
-    ],
-    'how-it-works': [
-      { path: '/features', label: 'Features', isHashLink: false },
-      { path: '/pricing', label: 'Pricing', isHashLink: false },
-      { path: '/how-it-works', label: 'How It Works', isHashLink: false },
-      { path: '/vision-mission', label: 'Our Mission', isHashLink: false }
     ]
   };
   
-  // Get the current set of nav links based on navType
-  const currentNavLinks = navLinks[navType] || navLinks.public;
+  // Wybierz odpowiedni zestaw linków w zależności od statusu autoryzacji
+  const currentNavLinks = authenticated ? navLinks.authenticated : navLinks.unauthenticated;
   
-  // Helper function to check if a link is active
+  // Funkcja pomocnicza do sprawdzania, czy link jest aktywny
   const isActive = (path, isHashLink) => {
     if (isHashLink) {
-      // For hash links, check if they match the current hash
+      // Dla linków z hashami sprawdź, czy pasują do aktualnego hasha
       return location.hash === path.substring(1);
     } else {
-      // For normal links, check if the pathname starts with the path (to handle nested routes)
+      // Dla normalnych linków sprawdź, czy ścieżka pasuje do aktualnej
       return location.pathname === path;
     }
   };
@@ -88,7 +57,7 @@ const Navbar = ({ navType = 'public' }) => {
     <div className="nav-container">
       <nav className="nav dynamic-island">
         <div className="nav-left">
-          <Link to="/" className="logo">Focus Flow</Link>
+          <Link to={authenticated ? "/dashboard" : "/"} className="logo">Focus Flow</Link>
           <div className="nav-links">
             {currentNavLinks.map((link, index) => (
               link.isHashLink ? (
@@ -112,7 +81,7 @@ const Navbar = ({ navType = 'public' }) => {
           </div>
         </div>
         <div className="nav-buttons">
-          {isAuthenticated() ? (
+          {authenticated ? (
             <>
               <Link to="/dashboard">
                 <Button variant="primary">Dashboard</Button>

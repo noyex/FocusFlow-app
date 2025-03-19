@@ -2,141 +2,144 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import Navbar from '../components/layout/Navbar';
+import withPageAnimation from '../components/hoc/withPageAnimation';
+import { motion } from 'framer-motion';
 import '../styles/pages/FeaturesPage.css';
 import '../styles/components/Logo.css';
 
-const FeaturesPage = () => {
+const FeaturesPage = ({ animateElement }) => {
+  // Lista funkcji aplikacji
+  const features = [
+    {
+      title: "Project Management",
+      description: "Organize and manage your projects with ease using our intuitive interface.",
+      details: [
+        "Create and organize multiple projects",
+        "Break down projects into manageable tasks",
+        "Set priorities and deadlines for each task",
+        "Track progress with visual indicators",
+        "Easily navigate between different projects"
+      ],
+      imageName: "Project Management Screenshot"
+    },
+    {
+      title: "Time Tracking",
+      description: "Monitor your productivity and track time spent on each task with precision.",
+      details: [
+        "Start, pause, and stop timers for any task",
+        "Automatically log time spent on activities",
+        "View detailed time reports by project or task",
+        "Analyze your productivity patterns",
+        "Export time logs for billing or analysis"
+      ],
+      imageName: "Time Tracking Screenshot"
+    },
+    {
+      title: "Focus Tools",
+      description: "Enhance your concentration with our suite of powerful focus techniques.",
+      details: [
+        "Customizable Pomodoro timer for focused work sessions",
+        "Break reminders to maintain productivity",
+        "Focus mode to eliminate distractions",
+        "Background noise and ambiance options",
+        "Daily focus goals and achievement tracking"
+      ],
+      imageName: "Focus Tools Screenshot"
+    },
+    {
+      title: "Analytics Dashboard",
+      description: "Gain valuable insights into your productivity patterns and work habits.",
+      details: [
+        "Visual representation of your productivity",
+        "Track daily, weekly, and monthly progress",
+        "Identify peak productivity times",
+        "Compare performance across different projects",
+        "Custom reports based on your needs"
+      ],
+      imageName: "Analytics Dashboard Screenshot"
+    },
+    {
+      title: "Team Collaboration",
+      description: "Collaborate seamlessly with your team members on shared projects.",
+      details: [
+        "Invite team members to collaborate on projects",
+        "Assign tasks to different team members",
+        "Track team progress and contributions",
+        "Comment and provide feedback on tasks",
+        "Shared calendar and milestone tracking"
+      ],
+      imageName: "Team Collaboration Screenshot"
+    }
+  ];
+
   return (
     <div className="features-page">
       <Navbar navType="features" />
       
       <main className="features-content">
-        <div className="features-header">
+        <motion.div 
+          className="features-header"
+          {...animateElement(0)}
+        >
           <h1>Discover Our Features</h1>
           <p className="subtitle">
             Explore all the powerful tools Focus Flow offers to maximize your productivity
             and help you stay on top of your projects.
           </p>
-        </div>
+        </motion.div>
 
         <div className="features-list">
-          <div className="feature-section">
-            <div className="feature-info">
-              <h2>Project Management</h2>
-              <p>Organize and manage your projects with ease using our intuitive interface.</p>
-              <ul className="feature-details">
-                <li>Create and organize multiple projects</li>
-                <li>Break down projects into manageable tasks</li>
-                <li>Set priorities and deadlines for each task</li>
-                <li>Track progress with visual indicators</li>
-                <li>Easily navigate between different projects</li>
-              </ul>
-              <Link to="/register">
-                <Button variant="primary">Try It Now</Button>
-              </Link>
-            </div>
-            <div className="feature-image">
-              <div className="image-placeholder">
-                <p>Project Management Screenshot</p>
-                <p className="coming-soon">Coming Soon</p>
+          {features.map((feature, index) => (
+            <motion.div 
+              key={index}
+              className={`feature-section ${index % 2 !== 0 ? 'reverse' : ''}`}
+              {...animateElement(index + 1, {
+                initial: { opacity: 0, x: index % 2 === 0 ? -30 : 30 },
+                animate: { opacity: 1, x: 0 },
+                transition: { duration: 0.6, delay: 0.2 * (index + 1) }
+              })}
+            >
+              <div className="feature-info">
+                <h2>{feature.title}</h2>
+                <p>{feature.description}</p>
+                <ul className="feature-details">
+                  {feature.details.map((detail, detailIndex) => (
+                    <motion.li 
+                      key={detailIndex}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3, delay: 0.4 + (0.1 * detailIndex) }}
+                    >
+                      {detail}
+                    </motion.li>
+                  ))}
+                </ul>
+                <Link to="/register">
+                  <Button variant="primary">Try It Now</Button>
+                </Link>
               </div>
-            </div>
-          </div>
-
-          <div className="feature-section reverse">
-            <div className="feature-info">
-              <h2>Time Tracking</h2>
-              <p>Monitor your productivity and track time spent on each task with precision.</p>
-              <ul className="feature-details">
-                <li>Start, pause, and stop timers for any task</li>
-                <li>Automatically log time spent on activities</li>
-                <li>View detailed time reports by project or task</li>
-                <li>Analyze your productivity patterns</li>
-                <li>Export time logs for billing or analysis</li>
-              </ul>
-              <Link to="/register">
-                <Button variant="primary">Try It Now</Button>
-              </Link>
-            </div>
-            <div className="feature-image">
-              <div className="image-placeholder">
-                <p>Time Tracking Screenshot</p>
-                <p className="coming-soon">Coming Soon</p>
+              <div className="feature-image">
+                <motion.div 
+                  className="image-placeholder"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <p>{feature.imageName}</p>
+                  <p className="coming-soon">Coming Soon</p>
+                </motion.div>
               </div>
-            </div>
-          </div>
-
-          <div className="feature-section">
-            <div className="feature-info">
-              <h2>Focus Tools</h2>
-              <p>Enhance your concentration with our suite of powerful focus techniques.</p>
-              <ul className="feature-details">
-                <li>Customizable Pomodoro timer for focused work sessions</li>
-                <li>Break reminders to maintain productivity</li>
-                <li>Focus mode to eliminate distractions</li>
-                <li>Background noise and ambiance options</li>
-                <li>Daily focus goals and achievement tracking</li>
-              </ul>
-              <Link to="/register">
-                <Button variant="primary">Try It Now</Button>
-              </Link>
-            </div>
-            <div className="feature-image">
-              <div className="image-placeholder">
-                <p>Focus Tools Screenshot</p>
-                <p className="coming-soon">Coming Soon</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="feature-section reverse">
-            <div className="feature-info">
-              <h2>Analytics Dashboard</h2>
-              <p>Gain valuable insights into your productivity patterns and work habits.</p>
-              <ul className="feature-details">
-                <li>Visual representation of your productivity</li>
-                <li>Track daily, weekly, and monthly progress</li>
-                <li>Identify peak productivity times</li>
-                <li>Compare performance across different projects</li>
-                <li>Custom reports based on your needs</li>
-              </ul>
-              <Link to="/register">
-                <Button variant="primary">Try It Now</Button>
-              </Link>
-            </div>
-            <div className="feature-image">
-              <div className="image-placeholder">
-                <p>Analytics Dashboard Screenshot</p>
-                <p className="coming-soon">Coming Soon</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="feature-section">
-            <div className="feature-info">
-              <h2>Team Collaboration</h2>
-              <p>Collaborate seamlessly with your team members on shared projects.</p>
-              <ul className="feature-details">
-                <li>Invite team members to collaborate on projects</li>
-                <li>Assign tasks to different team members</li>
-                <li>Track team progress and contributions</li>
-                <li>Comment and provide feedback on tasks</li>
-                <li>Shared calendar and milestone tracking</li>
-              </ul>
-              <Link to="/register">
-                <Button variant="primary">Try It Now</Button>
-              </Link>
-            </div>
-            <div className="feature-image">
-              <div className="image-placeholder">
-                <p>Team Collaboration Screenshot</p>
-                <p className="coming-soon">Coming Soon</p>
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          ))}
         </div>
 
-        <div className="features-cta">
+        <motion.div 
+          className="features-cta"
+          {...animateElement(features.length + 1, {
+            initial: { opacity: 0, y: 40 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.7 }
+          })}
+        >
           <h2>Ready to Supercharge Your Productivity?</h2>
           <p>Join thousands of users who are already experiencing the benefits of Focus Flow.</p>
           <div className="cta-buttons">
@@ -147,7 +150,7 @@ const FeaturesPage = () => {
               <Button variant="secondary">View Pricing</Button>
             </Link>
           </div>
-        </div>
+        </motion.div>
       </main>
 
       <footer className="footer">
@@ -204,4 +207,4 @@ const FeaturesPage = () => {
   );
 };
 
-export default FeaturesPage; 
+export default withPageAnimation(FeaturesPage); 

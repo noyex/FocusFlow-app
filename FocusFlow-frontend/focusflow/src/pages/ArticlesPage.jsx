@@ -4,8 +4,9 @@ import Button from '../components/ui/Button';
 import { Link } from 'react-router-dom';
 import '../styles/pages/ArticlesPage.css';
 import { motion, AnimatePresence } from 'framer-motion';
+import withPageAnimation from '../components/hoc/withPageAnimation';
 
-const ArticlesPage = () => {
+const ArticlesPage = ({ animateElement }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   
@@ -101,18 +102,14 @@ const ArticlesPage = () => {
       <div className="articles-content ios-style">
         <motion.div 
           className="articles-header"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          {...animateElement(0)}
         >
           <h1>Artykuły o produktywności</h1>
           <p className="subtitle">Wskazówki, techniki i porady, które pomogą Ci zwiększyć koncentrację i produktywność.</p>
           
           <motion.div 
             className="search-container"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            {...animateElement(1)}
           >
             <svg className="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"></circle>
@@ -139,26 +136,27 @@ const ArticlesPage = () => {
         
         <motion.div 
           className="categories-container"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
+          {...animateElement(2)}
         >
           {categories.map((category, index) => (
-            <button 
+            <motion.button 
               key={category.id}
               className={`category-button ${selectedCategory === category.id ? 'active' : ''}`}
               onClick={() => handleCategoryChange(category.id)}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.2, delay: 0.3 + (index * 0.05) }}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.95 }}
             >
               {category.name}
-            </button>
+            </motion.button>
           ))}
         </motion.div>
         
         <motion.div 
           className="articles-grid"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
+          {...animateElement(3)}
         >
           <AnimatePresence>
             {filteredArticles.length > 0 ? (
@@ -204,4 +202,4 @@ const ArticlesPage = () => {
   );
 };
 
-export default ArticlesPage; 
+export default withPageAnimation(ArticlesPage); 

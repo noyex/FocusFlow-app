@@ -2,48 +2,77 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import Navbar from '../components/layout/Navbar';
+import withPageAnimation from '../components/hoc/withPageAnimation';
+import { motion } from 'framer-motion';
 import '../styles/pages/LandingPage.css';
 import '../styles/components/Logo.css';
 
-const LandingPage = () => {
+const LandingPage = ({ animateElement }) => {
   return (
     <div className="landing-page">
       <Navbar navType="public" />
       
       <main className="main-content">
-        <div className="hero-section">
+        <motion.div 
+          className="hero-section"
+          {...animateElement(0)}
+        >
           <h1>Master Your Time, Amplify Your Focus</h1>
           <p className="subtitle">
             Transform your workflow with Focus Flow - the ultimate project management 
             and time tracking tool designed for peak productivity.
           </p>
-          <div className="cta-buttons">
+          <motion.div 
+            className="cta-buttons"
+            {...animateElement(1)}
+          >
             <Link to="/register">
               <Button variant="primary">Get Started for Free!</Button>
             </Link>
             <Link to="/features">
               <Button variant="secondary">Learn More</Button>
             </Link>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="features" id="features">
-          <div className="feature-card">
-            <div className="card-icon">📋</div>
-            <h3>Project Management</h3>
-            <p>Organize your projects and tasks with intuitive tools and clear hierarchy.</p>
-          </div>
-          <div className="feature-card">
-            <div className="card-icon">⏱️</div>
-            <h3>Time Tracking</h3>
-            <p>Monitor your productivity and track time spent on each task effortlessly.</p>
-          </div>
-          <div className="feature-card">
-            <div className="card-icon">🎯</div>
-            <h3>Focus Tools</h3>
-            <p>Enhance your concentration with built-in Pomodoro timer and focus techniques.</p>
-          </div>
-        </div>
+        <motion.div 
+          className="features" 
+          id="features"
+          {...animateElement(2, { 
+            initial: { opacity: 0, y: 30 },
+            transition: { duration: 0.6 }
+          })}
+        >
+          {[
+            {
+              icon: "📋",
+              title: "Project Management",
+              description: "Organize your projects and tasks with intuitive tools and clear hierarchy."
+            },
+            {
+              icon: "⏱️",
+              title: "Time Tracking",
+              description: "Monitor your productivity and track time spent on each task effortlessly."
+            },
+            {
+              icon: "🎯",
+              title: "Focus Tools",
+              description: "Enhance your concentration with built-in Pomodoro timer and focus techniques."
+            }
+          ].map((feature, index) => (
+            <motion.div 
+              className="feature-card" 
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 + (index * 0.1) }}
+            >
+              <div className="card-icon">{feature.icon}</div>
+              <h3>{feature.title}</h3>
+              <p>{feature.description}</p>
+            </motion.div>
+          ))}
+        </motion.div>
       </main>
 
       <footer className="footer">
@@ -100,4 +129,4 @@ const LandingPage = () => {
   );
 };
 
-export default LandingPage; 
+export default withPageAnimation(LandingPage); 
