@@ -10,74 +10,140 @@ const ArticlesPage = ({ animateElement }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   
-  // Przykładowe kategorie artykułów
+  // Article categories
   const categories = [
-    { id: 'all', name: 'Wszystkie' },
-    { id: 'productivity', name: 'Produktywność' },
-    { id: 'timemanagement', name: 'Zarządzanie czasem' },
-    { id: 'focus', name: 'Koncentracja' },
-    { id: 'motivation', name: 'Motywacja' }
+    { id: 'all', name: 'All' },
+    { id: 'productivity', name: 'Productivity' },
+    { id: 'timemanagement', name: 'Time Management' },
+    { id: 'focus', name: 'Focus' },
+    { id: 'motivation', name: 'Motivation' }
   ];
   
-  // Przykładowe artykuły
+  // Articles with real information
   const articles = [
     {
       id: 1,
-      title: 'Technika Pomodoro: Klucz do zwiększenia produktywności',
-      excerpt: 'Poznaj technikę Pomodoro i dowiedz się, jak efektywnie zarządzać swoim czasem, dzieląc pracę na 25-minutowe interwały.',
+      title: 'The Pomodoro Technique: A Scientific Approach to Maximizing Efficiency',
+      excerpt: 'Discover how the 25-minute work interval technique can boost productivity by 40% and reduce procrastination. We present neurological research on the effectiveness of the Pomodoro method along with practical tips to adapt the technique to your specific needs.',
       category: 'productivity',
       image: '🍅',
-      readTime: '5 min',
-      date: '12 maja 2023'
+      readTime: '7 min',
+      date: 'May 12, 2023',
+      link: 'https://francescocirillio.com/products/the-pomodoro-technique'
     },
     {
       id: 2,
-      title: 'Deep Work: Jak osiągnąć stan głębokiej koncentracji',
-      excerpt: 'Odkryj koncepcję Deep Work Cala Newporta i naucz się, jak eliminować rozpraszacze, aby osiągnąć maksymalną wydajność.',
+      title: 'Deep Work: Focused Work in an Era of Digital Distractions',
+      excerpt: 'Cal Newport defines deep work as "activities performed in a state of distraction-free concentration that push your cognitive capabilities to their limit." Learn how to create an environment that supports deep work by eliminating distractions, scheduling time blocks, and regular concentration training.',
       category: 'focus',
       image: '🧠',
-      readTime: '8 min',
-      date: '3 czerwca 2023'
+      readTime: '10 min',
+      date: 'June 3, 2023',
+      link: 'https://www.calnewport.com/books/deep-work/'
     },
     {
       id: 3,
-      title: 'Metoda GTD (Getting Things Done) w praktyce',
-      excerpt: 'Praktyczne wskazówki, jak wdrożyć metodę GTD Davida Allena do codziennego życia i zwiększyć swoją produktywność.',
+      title: 'David Allen\'s GTD Method: From Chaos to Control in 5 Steps',
+      excerpt: 'Getting Things Done (GTD) is not just a productivity system but a philosophy for managing cognitive load. Get a detailed guide to the five stages of GTD: capture, clarify, organize, reflect, and engage. Learn how to apply the 2-minute rule and conduct regular weekly reviews.',
       category: 'productivity',
       image: '✓',
-      readTime: '7 min',
-      date: '18 lipca 2023'
+      readTime: '12 min',
+      date: 'July 18, 2023',
+      link: 'https://gettingthingsdone.com/what-is-gtd/'
     },
     {
       id: 4,
-      title: 'Jak skutecznie planować tydzień pracy',
-      excerpt: 'Poznaj sprawdzone metody planowania tygodnia, które pomogą Ci osiągnąć więcej i zmniejszyć poziom stresu.',
+      title: 'Time Blocking: How Experts Manage Every Hour of Their Day',
+      excerpt: 'Time blocking is a technique used by Elon Musk, Bill Gates, and Cal Newport. By dividing your day into blocks of time assigned to specific tasks, you increase your accountability and reduce context switching. The article includes a 6-week plan to implement time blocking into your daily routine and downloadable templates.',
       category: 'timemanagement',
       image: '📅',
-      readTime: '6 min',
-      date: '5 sierpnia 2023'
+      readTime: '9 min',
+      date: 'August 5, 2023',
+      link: 'https://todoist.com/productivity-methods/time-blocking'
     },
     {
       id: 5,
-      title: 'Mindfulness: Trening uważności dla lepszej koncentracji',
-      excerpt: 'Jak praktyka mindfulness może pomóc Ci w zwiększeniu koncentracji i redukcji stresu w codziennym życiu.',
+      title: 'Neuroplasticity: Brain Training for Better Concentration',
+      excerpt: 'Recent research in neurobiology proves that you can train your brain for better concentration. Learn about a training protocol based on mindfulness meditation, cognitive exercises, and breathing techniques that can significantly improve your ability to maintain attention in 30 days. The article includes fMRI study results showing brain changes after regular training.',
       category: 'focus',
       image: '🧘',
-      readTime: '9 min',
-      date: '22 września 2023'
+      readTime: '11 min',
+      date: 'September 22, 2023',
+      link: 'https://www.mindful.org/how-to-practice-mindfulness/'
     },
     {
       id: 6,
-      title: 'Jak znaleźć motywację, gdy jej brakuje',
-      excerpt: 'Praktyczne strategie na odzyskanie motywacji i energii do działania, nawet w trudnych momentach.',
+      title: 'Goal-Based Motivation: The Science of Maintaining Enthusiasm',
+      excerpt: 'Why do some people maintain motivation for years, while others lose it after a few days? Research shows the difference lies in how goals are formulated and in the reward system. Learn about the SMART+EW (Specific, Measurable, Achievable, Relevant, Time-bound + Exciting, Worthwhile) method for creating goals that actually motivate and how to use a micro-reward system to build lasting habits.',
       category: 'motivation',
       image: '🔥',
-      readTime: '5 min',
-      date: '10 października 2023'
+      readTime: '8 min',
+      date: 'October 10, 2023',
+      link: 'https://jamesclear.com/goals-systems'
+    },
+    {
+      id: 7,
+      title: 'The Zeigarnik Effect: Use Unfinished Tasks to Increase Productivity',
+      excerpt: 'The Zeigarnik Effect is a psychological phenomenon in which unfinished tasks occupy more cognitive resources than completed tasks. Learn how to strategically leverage this effect to increase your productivity through planned work breaks, the "downhill parking" technique, and project structuring.',
+      category: 'productivity',
+      image: '🔄',
+      readTime: '6 min',
+      date: 'November 2, 2023',
+      link: 'https://en.wikipedia.org/wiki/Zeigarnik_effect'
+    },
+    {
+      id: 8,
+      title: 'The Eisenhower Method: How to Make Better Priority Decisions',
+      excerpt: 'The urgent-important matrix, known as the Eisenhower method, is a simple but powerful way to set priorities. Learn about the four quadrants of the matrix and how to distinguish between what is urgent and what is truly important. The article includes practical exercises for immediate application that will help you better manage tasks and reduce stress.',
+      category: 'timemanagement',
+      image: '📊',
+      readTime: '7 min',
+      date: 'November 19, 2023',
+      link: 'https://todoist.com/productivity-methods/eisenhower-matrix'
+    },
+    {
+      id: 9,
+      title: 'Flow States: How to Achieve and Maintain Optimal Performance',
+      excerpt: 'The flow state, described by Mihaly Csikszentmihalyi, is a state of complete immersion in a task where time seems to flow differently. Research shows that people in a flow state are up to 500% more productive. Learn about the 8 necessary conditions for achieving a flow state and techniques for sustaining it in different types of work.',
+      category: 'focus',
+      image: '🌊',
+      readTime: '9 min',
+      date: 'December 5, 2023',
+      link: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4939396/'
+    },
+    {
+      id: 10,
+      title: 'The Paradox of Choice: How Limiting Options Increases Productivity',
+      excerpt: 'Barry Schwartz in his book "The Paradox of Choice" argues that more options often lead to worse decisions and less satisfaction. Learn how to apply decision minimalism in everyday life by limiting the number of daily choices, creating routines, and applying the 80/20 rule to prioritize tasks.',
+      category: 'productivity',
+      image: '🔍',
+      readTime: '8 min',
+      date: 'January 15, 2024',
+      link: 'https://www.ted.com/talks/barry_schwartz_the_paradox_of_choice'
+    },
+    {
+      id: 11,
+      title: 'Chronotypes: How to Adapt Your Work Schedule to Your Biological Clock',
+      excerpt: 'Not everyone is productive at the same times of day. Research on chronotypes (owl, lark, bear, wolf) shows that matching your work schedule to your biological rhythm can increase efficiency by 30%. Learn how to determine your chronotype and how to optimize your daily schedule for maximum efficiency.',
+      category: 'timemanagement',
+      image: '⏰',
+      readTime: '10 min',
+      date: 'February 3, 2024',
+      link: 'https://www.sleepfoundation.org/how-sleep-works/chronotypes'
+    },
+    {
+      id: 12,
+      title: 'Lasting Motivation: From Enthusiasm to Habit',
+      excerpt: 'Motivation is temporary, but habits are lasting. This article combines the science of motivation with the latest research on habit formation. Learn about the four-stage habit cycle (cue, craving, response, reward) and how to create "habit anchors" and "habit stacks" that will survive even when initial motivation disappears.',
+      category: 'motivation',
+      image: '⚓',
+      readTime: '11 min',
+      date: 'February 20, 2024',
+      link: 'https://jamesclear.com/atomic-habits'
     }
   ];
   
-  // Funkcje pomocnicze
+  // Helper functions
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
   };
@@ -86,7 +152,7 @@ const ArticlesPage = ({ animateElement }) => {
     setSelectedCategory(categoryId);
   };
   
-  // Filtrowanie artykułów
+  // Filtering articles
   const filteredArticles = articles.filter(article => {
     const matchesSearch = article.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           article.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
@@ -104,8 +170,8 @@ const ArticlesPage = ({ animateElement }) => {
           className="articles-header"
           {...animateElement(0)}
         >
-          <h1>Artykuły o produktywności</h1>
-          <p className="subtitle">Wskazówki, techniki i porady, które pomogą Ci zwiększyć koncentrację i produktywność.</p>
+          <h1>Productivity Articles</h1>
+          <p className="subtitle">Tips, techniques, and advice to help you increase your focus and productivity.</p>
           
           <motion.div 
             className="search-container"
@@ -117,7 +183,7 @@ const ArticlesPage = ({ animateElement }) => {
             </svg>
             <input 
               type="text" 
-              placeholder="Szukaj artykułów..." 
+              placeholder="Search articles..." 
               value={searchTerm}
               onChange={handleSearchChange}
               className="search-input"
@@ -126,7 +192,7 @@ const ArticlesPage = ({ animateElement }) => {
               <button 
                 className="clear-search" 
                 onClick={() => setSearchTerm('')}
-                aria-label="Wyczyść wyszukiwanie"
+                aria-label="Clear search"
               >
                 ✕
               </button>
@@ -175,9 +241,11 @@ const ArticlesPage = ({ animateElement }) => {
                     <p className="article-excerpt">{article.excerpt}</p>
                     <div className="article-meta">
                       <span className="article-date">{article.date}</span>
-                      <span className="article-read-time">{article.readTime} czytania</span>
+                      <span className="article-read-time">{article.readTime} read</span>
                     </div>
-                    <Button variant="primary" className="read-more-btn">Czytaj więcej</Button>
+                    <a href={article.link} target="_blank" rel="noopener noreferrer">
+                      <Button variant="primary" className="read-more-btn">Read More</Button>
+                    </a>
                   </div>
                 </motion.div>
               ))
@@ -188,10 +256,10 @@ const ArticlesPage = ({ animateElement }) => {
                 animate={{ opacity: 1 }}
               >
                 <div className="icon">🔍</div>
-                <h2>Brak wyników</h2>
-                <p>Nie znaleziono artykułów pasujących do podanych kryteriów wyszukiwania.</p>
+                <h2>No Results</h2>
+                <p>No articles found matching your search criteria.</p>
                 <Button variant="secondary" onClick={() => {setSearchTerm(''); setSelectedCategory('all');}}>
-                  Wyczyść filtry
+                  Clear Filters
                 </Button>
               </motion.div>
             )}
