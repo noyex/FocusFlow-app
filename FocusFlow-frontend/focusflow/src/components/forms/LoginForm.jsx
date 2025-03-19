@@ -5,7 +5,7 @@ import BackButton from '../ui/BackButton';
 import { login } from '../../services/AuthService';
 import '../../styles/components/Form.css';
 
-const LoginForm = () => {
+const LoginForm = ({ showBackButton = true }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ const LoginForm = () => {
 
   return (
     <div className="form-container">
-      <BackButton />
+      {showBackButton && <BackButton />}
       <form className="auth-form" onSubmit={handleSubmit}>
         <h2>Welcome Back</h2>
         <p className="form-subtitle">Sign in to continue to Focus Flow</p>

@@ -1,7 +1,11 @@
-.back-button {
-  position: absolute;
+.back-button-container {
+  position: fixed;
   top: 20px;
   left: 20px;
+  z-index: 999;
+}
+
+.back-button {
   display: flex;
   align-items: center;
   color: rgba(255, 255, 255, 0.7);
@@ -9,10 +13,9 @@
   font-size: 14px;
   font-weight: 500;
   transition: all 0.3s ease;
-  z-index: 10;
   padding: 8px 12px;
   border-radius: 20px;
-  background: rgba(30, 30, 46, 0.6);
+  background: rgba(30, 30, 46, 0.8);
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -48,9 +51,12 @@
 }
 
 @media (max-width: 768px) {
-  .back-button {
+  .back-button-container {
     top: 15px;
     left: 15px;
+  }
+  
+  .back-button {
     padding: 6px 10px;
   }
 } 
