@@ -146,11 +146,11 @@ public class User implements UserDetails {
         this.createdAt = createdAt;
     }
 
-    public Plan getRole() {
+    public Plan getPlan() {
         return plan;
     }
 
-    public void setRole(Plan plan) {
+    public void setPlan(Plan plan) {
         this.plan = plan;
     }
 
@@ -161,4 +161,5 @@ public class User implements UserDetails {
     public void setProjects(List<Project> projects) {
         this.projects = projects;
     }
+
 }

@@ -56,11 +56,13 @@ public class Project {
     @Column(name = "total_time", nullable = false)
     private Long totalTime = 0L;
 
+    @Column(name = "total_time_without_breaks", nullable = false)
+    private Long totalTimeWithoutBreaks = 0L;
+
     public Project() {
     }
 
-
-    public Project(Long id, String name, String description, User user, List<Task> tasks, Status status, LocalDateTime createdAt, LocalDate startDate, LocalDate endDate, Integer totalTasks, Integer completedTasks, boolean completed, Long totalTime) {
+    public Project(Long id, String name, String description, User user, List<Task> tasks, Status status, LocalDateTime createdAt, LocalDate startDate, LocalDate endDate, Integer totalTasks, Integer completedTasks, boolean completed, Long totalTime, Long totalTimeWithoutBreaks) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -74,6 +76,7 @@ public class Project {
         this.completedTasks = completedTasks;
         this.completed = completed;
         this.totalTime = totalTime;
+        this.totalTimeWithoutBreaks = totalTimeWithoutBreaks;
     }
 
     public Long getId() {
@@ -178,6 +181,14 @@ public class Project {
 
     public void setTotalTime(Long totalTime) {
         this.totalTime = totalTime;
+    }
+
+    public Long getTotalTimeWithoutBreaks() {
+        return totalTimeWithoutBreaks;
+    }
+
+    public void setTotalTimeWithoutBreaks(Long totalTimeWithoutBreaks) {
+        this.totalTimeWithoutBreaks = totalTimeWithoutBreaks;
     }
 }
 

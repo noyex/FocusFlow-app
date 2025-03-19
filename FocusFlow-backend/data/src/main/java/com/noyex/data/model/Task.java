@@ -1,10 +1,12 @@
 package com.noyex.data.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.noyex.data.model.enums.Priority;
 import com.noyex.data.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -27,29 +29,46 @@ public class Task {
     @Column(nullable = false)
     private Status status = Status.TO_DO;
 
+    @Enumerated
+    @Column(nullable = false)
+    private Priority priority = Priority.LOW;
+
     private boolean completed;
 
     @Column(name = "estimated_time")
     private Long estimatedTime;
 
-    @Column(name = "time_worked", nullable = false)
-    private Long timeWorked = 0L;
+    @Column(name = "actual_start_time")
+    private LocalDateTime actualStartTime;
 
-    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Session> sessions;
+    @Column(name = "actual_end_time")
+    private LocalDateTime actualEndTime;
+
+    @Column(name = "start_progress_time")
+    private LocalDateTime startProgressTime;
+
+    @Column(name = "end_progress_time")
+    private LocalDateTime endProgressTime;
+
+    @Column(name = "total_time", nullable = false)
+    private Long totalTime = 0L;
 
     public Task() {
     }
 
-    public Task(Long id, String name, Project project, Status status, boolean completed, Long estimatedTime, Long timeWorked, List<Session> sessions) {
+    public Task(Long id, String name, Project project, Status status, Priority priority, boolean completed, Long estimatedTime, LocalDateTime actualStartTime, LocalDateTime actualEndTime, LocalDateTime startProgressTime, LocalDateTime endProgressTime, Long totalTime) {
         this.id = id;
         this.name = name;
         this.project = project;
         this.status = status;
+        this.priority = priority;
         this.completed = completed;
         this.estimatedTime = estimatedTime;
-        this.timeWorked = timeWorked;
-        this.sessions = sessions;
+        this.actualStartTime = actualStartTime;
+        this.actualEndTime = actualEndTime;
+        this.startProgressTime = startProgressTime;
+        this.endProgressTime = endProgressTime;
+        this.totalTime = totalTime;
     }
 
     public Long getId() {
@@ -84,6 +103,14 @@ public class Task {
         this.status = status;
     }
 
+    public Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
     public boolean isCompleted() {
         return completed;
     }
@@ -100,19 +127,43 @@ public class Task {
         this.estimatedTime = estimatedTime;
     }
 
-    public Long getTimeWorked() {
-        return timeWorked;
+    public LocalDateTime getActualStartTime() {
+        return actualStartTime;
     }
 
-    public void setTimeWorked(Long timeWorked) {
-        this.timeWorked = timeWorked;
+    public void setActualStartTime(LocalDateTime actualStartTime) {
+        this.actualStartTime = actualStartTime;
     }
 
-    public List<Session> getSessions() {
-        return sessions;
+    public LocalDateTime getActualEndTime() {
+        return actualEndTime;
     }
 
-    public void setSessions(List<Session> sessions) {
-        this.sessions = sessions;
+    public void setActualEndTime(LocalDateTime actualEndTime) {
+        this.actualEndTime = actualEndTime;
+    }
+
+    public LocalDateTime getStartProgressTime() {
+        return startProgressTime;
+    }
+
+    public void setStartProgressTime(LocalDateTime startProgressTime) {
+        this.startProgressTime = startProgressTime;
+    }
+
+    public LocalDateTime getEndProgressTime() {
+        return endProgressTime;
+    }
+
+    public void setEndProgressTime(LocalDateTime endProgressTime) {
+        this.endProgressTime = endProgressTime;
+    }
+
+    public Long getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(Long totalTime) {
+        this.totalTime = totalTime;
     }
 }
