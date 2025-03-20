@@ -6,13 +6,16 @@ import com.noyex.data.model.DTOs.UserDto;
 import com.noyex.data.model.Project;
 import com.noyex.data.model.Task;
 import com.noyex.data.model.User;
+import com.noyex.data.model.UserFocusDetails;
 import com.noyex.data.repository.ProjectRepository;
 import com.noyex.data.repository.TaskRepository;
+import com.noyex.data.repository.UserFocusDetailsRepository;
 import com.noyex.data.repository.UserRepository;
 import com.noyex.service.exceptions.ProjectNotFoundException;
 import com.noyex.service.exceptions.TaskNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,17 +26,20 @@ public class TaskService implements ITaskService{
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
+    private final UserFocusDetailsRepository userFocusDetailsRepository;
 
-    public TaskService(TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository, UserFocusDetailsRepository userFocusDetailsRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
+        this.userFocusDetailsRepository = userFocusDetailsRepository;
     }
 
 
     @Override
     public Task createTask(TaskDto taskDto, Long userId) {
         Optional<User> user = userRepository.findById(userId);
+        UserFocusDetails userFocusDetails =  userFocusDetailsRepository.findByUserId(userId);
 
         Optional<Project> project = projectRepository.findById(taskDto.getProjectId());
         if (project.isEmpty()) {
@@ -43,12 +49,21 @@ public class TaskService implements ITaskService{
             Task task = new Task();
             Project existingProject = project.get();
             task.setName(taskDto.getName());
+
+            String priority = taskDto.getPriority();
+            setPriority(task, priority);
+
             task.setProject(existingProject);
             task.setCompleted(false);
             task.setEstimatedTime(taskDto.getEstimatedTime());
+            task.setActualStartTime(LocalDateTime.now());
+            task.setActualEndTime(null);
 
             existingProject.setTotalTasks(existingProject.getTotalTasks() + 1);
             projectRepository.save(existingProject);
+
+            userFocusDetails.setTotalTasksOngoing(userFocusDetails.getTotalTasksOngoing() + 1);
+            userFocusDetailsRepository.save(userFocusDetails);
 
             return taskRepository.save(task);
         } else {
@@ -70,8 +85,11 @@ public class TaskService implements ITaskService{
         Optional<Task> task = taskRepository.findById(taskId);
         if(task.isPresent()) {
             Task existingTask = task.get();
+            String priority = taskDto.getPriority();
+            setPriority(existingTask, priority);
             existingTask.setName(taskDto.getName());
             existingTask.setEstimatedTime(taskDto.getEstimatedTime());
+
             return taskRepository.save(existingTask);
         } else {
             throw new TaskNotFoundException("Task not found");
@@ -80,22 +98,34 @@ public class TaskService implements ITaskService{
     }
 
     @Override
-    public void deleteTask(Long taskId) {
+    public void deleteTask(Long taskId, Long userId) {
         Optional<Task> task = taskRepository.findById(taskId);
-        if(task.isPresent()) {
-
-            Project project = task.get().getProject();
-            project.setTotalTasks(project.getTotalTasks() - 1);
-            projectRepository.save(project);
-
-            taskRepository.deleteById(taskId);
-        } else {
+        if(task.isEmpty()) {
             throw new TaskNotFoundException("Task not found");
         }
+        UserFocusDetails userFocusDetails = userFocusDetailsRepository.findByUserId(userId);
+        String taskStatus = task.get().getStatus().toString();
+        if(taskStatus.equals("IN_PROGRESS") || taskStatus.equals("TO_DO")) {
+            userFocusDetails.setTotalTasksOngoing(userFocusDetails.getTotalTasksOngoing() - 1);
+            userFocusDetailsRepository.save(userFocusDetails);
+        }
+        taskRepository.deleteById(taskId);
     }
 
     @Override
     public List<Task> getAllTasksByProjectId(Long projectId) {
         return taskRepository.findByProjectId(projectId);
+    }
+
+    private void setPriority(Task task, String priority) {
+        if (priority.equalsIgnoreCase("HIGH")) {
+            task.setPriority(com.noyex.data.model.enums.Priority.HIGH);
+        } else if (priority.equalsIgnoreCase("MEDIUM")) {
+            task.setPriority(com.noyex.data.model.enums.Priority.MEDIUM);
+        } else if (priority.equalsIgnoreCase("LOW")) {
+            task.setPriority(com.noyex.data.model.enums.Priority.LOW);
+        } else {
+            throw new RuntimeException("Invalid priority");
+        }
     }
 }

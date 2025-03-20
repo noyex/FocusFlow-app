@@ -5,6 +5,8 @@ import com.noyex.data.model.DTOs.LoginUserDto;
 import com.noyex.data.model.DTOs.RegisterUserDto;
 import com.noyex.data.model.DTOs.VerifyUserDto;
 import com.noyex.data.model.User;
+import com.noyex.data.model.UserFocusDetails;
+import com.noyex.data.repository.UserFocusDetailsRepository;
 import com.noyex.data.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,17 +24,19 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final UserFocusDetailsRepository userFocusDetailsRepository;
 
     public AuthenticationService(
             UserRepository userRepository,
             AuthenticationManager authenticationManager,
             PasswordEncoder passwordEncoder,
-            EmailService emailService
+            EmailService emailService, UserFocusDetailsRepository userFocusDetailsRepository
     ) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
+        this.userFocusDetailsRepository = userFocusDetailsRepository;
     }
 
     public User signup(RegisterUserDto input) {
@@ -80,6 +84,9 @@ public class AuthenticationService {
                 user.setEnabled(true);
                 user.setVerificationCode(null);
                 user.setVerificationCodeExpiresAt(null);
+                UserFocusDetails userFocusDetails = new UserFocusDetails();
+                userFocusDetails.setUser(user);
+                userFocusDetailsRepository.save(userFocusDetails);
                 userRepository.save(user);
             } else {
                 throw new InvalidVerificationCodeException("Invalid verification code");

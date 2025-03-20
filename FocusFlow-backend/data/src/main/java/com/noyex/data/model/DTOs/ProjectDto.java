@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 public class ProjectDto {
     private String name;
     private String description;
-    @JsonProperty("end_date")
-    private LocalDate endDate;
+    @JsonProperty("due_to")
+    private LocalDate dueTo;
 
-    public LocalDate getEndDate() {
-        return endDate;
+    public LocalDate getDueTo() {
+        return dueTo;
     }
 
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
+    public void setDueTo(LocalDate dueTo) {
+        this.dueTo = dueTo;
     }
 
     public String getName() {

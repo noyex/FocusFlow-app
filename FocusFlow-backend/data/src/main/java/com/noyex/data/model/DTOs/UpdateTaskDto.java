@@ -4,6 +4,7 @@ public class UpdateTaskDto {
 
     private String name;
     private Long estimatedTime;
+    private String priority;
 
     public String getName() {
         return name;
@@ -19,5 +20,13 @@ public class UpdateTaskDto {
 
     public void setEstimatedTime(Long estimatedTime) {
         this.estimatedTime = estimatedTime;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 }

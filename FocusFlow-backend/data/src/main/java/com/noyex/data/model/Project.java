@@ -45,6 +45,9 @@ public class Project {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @Column(name = "due_to")
+    private LocalDate dueTo;
+
     @Column(name = "total_tasks", nullable = false)
     private Integer totalTasks = 0;
 
@@ -62,7 +65,7 @@ public class Project {
     public Project() {
     }
 
-    public Project(Long id, String name, String description, User user, List<Task> tasks, Status status, LocalDateTime createdAt, LocalDate startDate, LocalDate endDate, Integer totalTasks, Integer completedTasks, boolean completed, Long totalTime, Long totalTimeWithoutBreaks) {
+    public Project(Long id, String name, String description, User user, List<Task> tasks, Status status, LocalDateTime createdAt, LocalDate startDate, LocalDate endDate, LocalDate dueTo, Integer totalTasks, Integer completedTasks, boolean completed, Long totalTime, Long totalTimeWithoutBreaks) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -72,6 +75,7 @@ public class Project {
         this.createdAt = createdAt;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.dueTo = dueTo;
         this.totalTasks = totalTasks;
         this.completedTasks = completedTasks;
         this.completed = completed;
@@ -189,6 +193,14 @@ public class Project {
 
     public void setTotalTimeWithoutBreaks(Long totalTimeWithoutBreaks) {
         this.totalTimeWithoutBreaks = totalTimeWithoutBreaks;
+    }
+
+    public LocalDate getDueTo() {
+        return dueTo;
+    }
+
+    public void setDueTo(LocalDate dueTo) {
+        this.dueTo = dueTo;
     }
 }
 

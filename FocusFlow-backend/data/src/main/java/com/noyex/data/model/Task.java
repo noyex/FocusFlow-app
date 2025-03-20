@@ -31,7 +31,7 @@ public class Task {
 
     @Enumerated
     @Column(nullable = false)
-    private Priority priority = Priority.LOW;
+    private Priority priority;
 
     private boolean completed;
 
@@ -44,19 +44,13 @@ public class Task {
     @Column(name = "actual_end_time")
     private LocalDateTime actualEndTime;
 
-    @Column(name = "start_progress_time")
-    private LocalDateTime startProgressTime;
-
-    @Column(name = "end_progress_time")
-    private LocalDateTime endProgressTime;
-
     @Column(name = "total_time", nullable = false)
     private Long totalTime = 0L;
 
     public Task() {
     }
 
-    public Task(Long id, String name, Project project, Status status, Priority priority, boolean completed, Long estimatedTime, LocalDateTime actualStartTime, LocalDateTime actualEndTime, LocalDateTime startProgressTime, LocalDateTime endProgressTime, Long totalTime) {
+    public Task(Long id, String name, Project project, Status status, Priority priority, boolean completed, Long estimatedTime, LocalDateTime actualStartTime, LocalDateTime actualEndTime,Long totalTime) {
         this.id = id;
         this.name = name;
         this.project = project;
@@ -66,8 +60,6 @@ public class Task {
         this.estimatedTime = estimatedTime;
         this.actualStartTime = actualStartTime;
         this.actualEndTime = actualEndTime;
-        this.startProgressTime = startProgressTime;
-        this.endProgressTime = endProgressTime;
         this.totalTime = totalTime;
     }
 
@@ -141,22 +133,6 @@ public class Task {
 
     public void setActualEndTime(LocalDateTime actualEndTime) {
         this.actualEndTime = actualEndTime;
-    }
-
-    public LocalDateTime getStartProgressTime() {
-        return startProgressTime;
-    }
-
-    public void setStartProgressTime(LocalDateTime startProgressTime) {
-        this.startProgressTime = startProgressTime;
-    }
-
-    public LocalDateTime getEndProgressTime() {
-        return endProgressTime;
-    }
-
-    public void setEndProgressTime(LocalDateTime endProgressTime) {
-        this.endProgressTime = endProgressTime;
     }
 
     public Long getTotalTime() {

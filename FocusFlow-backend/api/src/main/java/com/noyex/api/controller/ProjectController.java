@@ -71,7 +71,7 @@ public class ProjectController {
         if(userId != projectUserId) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
-        projectService.deleteProject(id);
+        projectService.deleteProject(id, userId);
         return ResponseEntity.ok("Project deleted successfully");
     }
 

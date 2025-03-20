@@ -9,6 +9,6 @@ public interface IProjectService {
     Project createProject(ProjectDto projectDto, Long userId);
     Project getProjectById(Long id);
     Project updateProject(Long projectId, ProjectDto projectDto);
-    void deleteProject(Long projectId);
+    void deleteProject(Long projectId, Long userId);
     List<Project> getAllProjectsByUserId(Long userId);
 }

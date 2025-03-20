@@ -10,6 +10,6 @@ public interface ITaskService {
     Task createTask(TaskDto taskDto, Long userId);
     Task getTaskById(Long taskId);
     Task updateTask(Long taskId, UpdateTaskDto taskDto);
-    void deleteTask(Long taskId);
+    void deleteTask(Long taskId, Long userId);
     List<Task> getAllTasksByProjectId(Long projectId);
 }
