@@ -10,6 +10,7 @@ import com.noyex.service.exceptions.SessionNotFoundException;
 import com.noyex.service.exceptions.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -50,57 +51,33 @@ public class SessionService implements ISessionService {
 
     @Override
     public Session endSession(Long userId, Long sessionId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found with id: " + userId);
-        }
-        Optional<Session> sessionOptional = sessionRepository.findById(sessionId);
-        if (sessionOptional.isEmpty()) {
-            throw new SessionNotFoundException("Session not found with id: " + sessionId);
-        }
-        Session session = sessionOptional.get();
+        Session session = validateSession(userId, sessionId);
         session.setEndTime(LocalDateTime.now());
 
-        Long totalTime = (long) (session.getEndTime().getSecond() - session.getRealStartTime().getSecond());
-        session.setTotalTime(totalTime);
+        long totalTimeMinutes = Duration.between(session.getRealStartTime(), session.getEndTime()).toMinutes();
+        session.setTotalTime(totalTimeMinutes);
 
-        Long workTime = (long) (session.getEndTime().getMinute() - session.getStartTime().getSecond());
-        session.setWorkTime(session.getWorkTime() + workTime);
+        long workTimeMinutes = Duration.between(session.getStartTime(), session.getEndTime()).toMinutes();
+        session.setWorkTime(session.getWorkTime() + workTimeMinutes);
 
-        session.setBreakTime(0L); // Assuming break time is 0 for now
+        session.setBreakTime(0L);
         return sessionRepository.save(session);
     }
 
     @Override
     public void pauseSession(Long userId, Long sessionId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found with id: " + userId);
-        }
-        Optional<Session> sessionOptional = sessionRepository.findById(sessionId);
-        if (sessionOptional.isEmpty()) {
-            throw new SessionNotFoundException("Session not found with id: " + sessionId);
-        }
-        Session session = sessionOptional.get();
-
+        Session session = validateSession(userId, sessionId);
         session.setEndTime(LocalDateTime.now());
 
-        Long workTime = (long) (session.getEndTime().getSecond() - session.getStartTime().getSecond());
-        session.setWorkTime(session.getWorkTime() + workTime);
+        long workTimeMinutes = Duration.between(session.getStartTime(), session.getEndTime()).toMinutes();
+        session.setWorkTime(session.getWorkTime() + workTimeMinutes);
 
+        sessionRepository.save(session);
     }
 
     @Override
     public void resumeSession(Long userId, Long sessionId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException("User not found with id: " + userId);
-        }
-        Optional<Session> sessionOptional = sessionRepository.findById(sessionId);
-        if (sessionOptional.isEmpty()) {
-            throw new SessionNotFoundException("Session not found with id: " + sessionId);
-        }
-        Session session = sessionOptional.get();
+        Session session = validateSession(userId, sessionId);
 
         session.setStartTime(LocalDateTime.now());
         session.setEndTime(null);
@@ -114,6 +91,18 @@ public class SessionService implements ISessionService {
         Optional<Session> sessionOptional = sessionRepository.findById(id);
         if (sessionOptional.isEmpty()) {
             throw new SessionNotFoundException("Session not found with id: " + id);
+        }
+        return sessionOptional.get();
+    }
+
+    private Session validateSession(Long userId, Long sessionId){
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found with id: " + userId);
+        }
+        Optional<Session> sessionOptional = sessionRepository.findById(sessionId);
+        if (sessionOptional.isEmpty()) {
+            throw new SessionNotFoundException("Session not found with id: " + sessionId);
         }
         return sessionOptional.get();
     }
