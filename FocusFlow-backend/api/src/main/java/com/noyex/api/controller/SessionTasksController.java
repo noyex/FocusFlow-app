@@ -19,10 +19,10 @@ public class SessionTasksController {
         this.jwtService = jwtService;
     }
 
-    @PostMapping("/start/{sessionId}/{taskId}")
-    public ResponseEntity<SessionTasks> startTask(HttpServletRequest request, @PathVariable Long sessionId, @PathVariable Long taskId) {
+    @PostMapping("/start/{taskId}")
+    public ResponseEntity<SessionTasks> startTask(HttpServletRequest request, @PathVariable Long taskId) {
         Long userId = getUserIdFromToken(request);
-        SessionTasks sessionTasks = sessionTasksService.startTask(sessionId, taskId, userId);
+        SessionTasks sessionTasks = sessionTasksService.startTask(taskId, userId);
         return ResponseEntity.ok(sessionTasks);
     }
 

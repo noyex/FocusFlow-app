@@ -7,6 +7,8 @@ import com.noyex.data.model.Project;
 import com.noyex.data.model.Task;
 import com.noyex.data.model.User;
 import com.noyex.data.model.UserFocusDetails;
+import com.noyex.data.model.enums.Priority;
+import com.noyex.data.model.enums.Status;
 import com.noyex.data.repository.ProjectRepository;
 import com.noyex.data.repository.TaskRepository;
 import com.noyex.data.repository.UserFocusDetailsRepository;
@@ -122,7 +124,7 @@ public class TaskService implements ITaskService{
         Optional<Task> task = taskRepository.findById(taskId);
         if(task.isPresent()) {
             Task existingTask = task.get();
-            existingTask.setStatus(com.noyex.data.model.enums.Status.IN_PROGRESS);
+            existingTask.setStatus(Status.IN_PROGRESS);
             taskRepository.save(existingTask);
         } else {
             throw new TaskNotFoundException("Task not found");
@@ -134,7 +136,7 @@ public class TaskService implements ITaskService{
         Optional<Task> task = taskRepository.findById(taskId);
         if(task.isPresent()) {
             Task existingTask = task.get();
-            existingTask.setStatus(com.noyex.data.model.enums.Status.DONE);
+            existingTask.setStatus(Status.DONE);
             existingTask.setActualEndTime(LocalDateTime.now());
             taskRepository.save(existingTask);
         } else {
@@ -144,11 +146,11 @@ public class TaskService implements ITaskService{
 
     private void setPriority(Task task, String priority) {
         if (priority.equalsIgnoreCase("HIGH")) {
-            task.setPriority(com.noyex.data.model.enums.Priority.HIGH);
+            task.setPriority(Priority.HIGH);
         } else if (priority.equalsIgnoreCase("MEDIUM")) {
-            task.setPriority(com.noyex.data.model.enums.Priority.MEDIUM);
+            task.setPriority(Priority.MEDIUM);
         } else if (priority.equalsIgnoreCase("LOW")) {
-            task.setPriority(com.noyex.data.model.enums.Priority.LOW);
+            task.setPriority(Priority.LOW);
         } else {
             throw new RuntimeException("Invalid priority");
         }

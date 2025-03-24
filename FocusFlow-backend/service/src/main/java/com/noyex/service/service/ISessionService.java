@@ -12,4 +12,6 @@ public interface ISessionService {
     void resumeSession(Long userId, Long sessionId);
 
     Session getSessionById(Long id);
+
+    Session getCurrentSessionByUserId(Long userId);
 }

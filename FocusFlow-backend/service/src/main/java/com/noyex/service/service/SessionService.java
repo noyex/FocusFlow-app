@@ -96,6 +96,11 @@ public class SessionService implements ISessionService {
         return sessionOptional.get();
     }
 
+    @Override
+    public Session getCurrentSessionByUserId(Long userId) {
+        return sessionRepository.findByUserIdAndIsActive(userId, true);
+    }
+
     private Session validateSession(Long userId, Long sessionId){
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {

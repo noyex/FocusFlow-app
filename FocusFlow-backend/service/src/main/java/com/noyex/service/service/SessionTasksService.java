@@ -3,6 +3,7 @@ package com.noyex.service.service;
 import com.noyex.data.model.Session;
 import com.noyex.data.model.SessionTasks;
 import com.noyex.data.model.Task;
+import com.noyex.data.model.enums.Status;
 import com.noyex.data.repository.SessionRepository;
 import com.noyex.data.repository.SessionTasksRepository;
 import com.noyex.data.repository.TaskRepository;
@@ -31,29 +32,30 @@ public class SessionTasksService implements ISessionTasksService {
 
 
     @Override
-    public SessionTasks startTask(Long sessionId, Long taskId, Long userId) {
-
-        Optional<Session> sessionOptional = sessionRepository.findById(sessionId);
-        if (sessionOptional.isEmpty()) {
-            throw new SessionNotFoundException("Session not found with id: " + sessionId);
-        }
-        Session session = sessionOptional.get();
-
+    public SessionTasks startTask(Long taskId, Long userId) {
         SessionTasks sessionTasks = new SessionTasks();
-        if(!session.isActive()) {
-            Session newSession = sessionService.startSession(userId);
-            sessionTasks.setSession(newSession);
-        } else {
-            sessionTasks.setSession(session);
-        }
 
+        // sprawdzamy czy task istnieje i ustawiamy
         Optional<Task> taskOptional = taskRepository.findById(taskId);
         if (taskOptional.isEmpty()) {
             throw new TaskNotFoundException("Task not found with id: " + taskId);
         }
-        sessionTasks.setTask(taskOptional.get());
+        Task task = taskOptional.get();
+        task.setStatus(Status.IN_PROGRESS);
+        sessionTasks.setTask(task);
+
         sessionTasks.setStartTime(LocalDateTime.now());
         sessionTasks.setTotalTime(0L);
+
+        // sprawdzamy czy jest juz aktywna sesja i ustawiamy sesje do sessionTasks
+        Session session = sessionService.getCurrentSessionByUserId(userId);
+        if (session == null) {
+            Session newSession = sessionService.startSession(userId);
+            sessionTasks.setSession(newSession);
+            return sessionTasksRepository.save(sessionTasks);
+        }
+        sessionTasks.setSession(session);
+
         return sessionTasksRepository.save(sessionTasks);
     }
 

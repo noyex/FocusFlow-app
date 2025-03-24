@@ -60,6 +60,12 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
+    @PutMapping("/status/done/{id}")
+    public ResponseEntity.BodyBuilder statusDone(@PathVariable Long id) {
+        taskService.statusDone(id);
+        return ResponseEntity.ok();
+    }
+
     private Long getUserIdFromToken(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
 
@@ -79,5 +85,6 @@ public class TaskController {
             throw new RuntimeException("User not authorized to access this task");
         }
     }
+
 
 }
