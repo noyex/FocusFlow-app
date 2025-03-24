@@ -2,6 +2,7 @@ package com.noyex.api.controller;
 
 import com.noyex.auth.service.JwtService;
 import com.noyex.data.model.Session;
+import com.noyex.service.service.ISessionService;
 import com.noyex.service.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
@@ -10,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/sessions")
 public class SessionController {
 
-    private final SessionService sessionService;
+    private final ISessionService sessionService;
     private final JwtService jwtService;
 
-    public SessionController(SessionService sessionService, JwtService jwtService) {
+    public SessionController(ISessionService sessionService, JwtService jwtService) {
         this.sessionService = sessionService;
         this.jwtService = jwtService;
     }

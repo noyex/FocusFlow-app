@@ -1,6 +1,11 @@
 package com.noyex.data.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "session_tasks")
@@ -12,17 +17,19 @@ public class SessionTasks {
 
     @ManyToOne
     @JoinColumn(name = "session_id", nullable = false)
+    @JsonIgnore
     private Session session;
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
+    @JsonIgnore
     private Task task;
 
     @Column(name = "start_time")
-    private Long startTime;
+    private LocalDateTime startTime;
 
     @Column(name = "end_time")
-    private Long endTime;
+    private LocalDateTime endTime;
 
     @Column(name = "total_time", nullable = false)
     private Long totalTime = 0L;
@@ -30,7 +37,7 @@ public class SessionTasks {
     public SessionTasks() {
     }
 
-    public SessionTasks(Long id, Session session, Task task, Long startTime, Long endTime, Long totalTime) {
+    public SessionTasks(Long id, Session session, Task task, LocalDateTime startTime, LocalDateTime endTime, Long totalTime) {
         this.id = id;
         this.session = session;
         this.task = task;
@@ -63,19 +70,19 @@ public class SessionTasks {
         this.task = task;
     }
 
-    public Long getStartTime() {
+    public LocalDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(Long startTime) {
+    public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
 
-    public Long getEndTime() {
+    public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Long endTime) {
+    public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
 
