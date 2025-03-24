@@ -117,6 +117,31 @@ public class TaskService implements ITaskService{
         return taskRepository.findByProjectId(projectId);
     }
 
+    @Override
+    public void statusInProgress(Long taskId) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if(task.isPresent()) {
+            Task existingTask = task.get();
+            existingTask.setStatus(com.noyex.data.model.enums.Status.IN_PROGRESS);
+            taskRepository.save(existingTask);
+        } else {
+            throw new TaskNotFoundException("Task not found");
+        }
+    }
+
+    @Override
+    public void statusDone(Long taskId) {
+        Optional<Task> task = taskRepository.findById(taskId);
+        if(task.isPresent()) {
+            Task existingTask = task.get();
+            existingTask.setStatus(com.noyex.data.model.enums.Status.DONE);
+            existingTask.setActualEndTime(LocalDateTime.now());
+            taskRepository.save(existingTask);
+        } else {
+            throw new TaskNotFoundException("Task not found");
+        }
+    }
+
     private void setPriority(Task task, String priority) {
         if (priority.equalsIgnoreCase("HIGH")) {
             task.setPriority(com.noyex.data.model.enums.Priority.HIGH);
