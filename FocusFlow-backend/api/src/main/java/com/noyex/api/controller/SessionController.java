@@ -5,6 +5,7 @@ import com.noyex.data.model.Session;
 import com.noyex.service.service.ISessionService;
 import com.noyex.service.service.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,9 +21,10 @@ public class SessionController {
     }
 
     @PostMapping("/start")
-    public Long startSession(HttpServletRequest request) {
+    public ResponseEntity<Session> startSession(HttpServletRequest request) {
         Long userId = getUserIdFromToken(request);
-        return sessionService.startSession(userId);
+        Session session = sessionService.startSession(userId);
+        return ResponseEntity.ok(session);
     }
 
     @PutMapping("/end/{sessionId}")

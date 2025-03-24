@@ -20,23 +20,33 @@ public class SessionTasksService implements ISessionTasksService {
     private final SessionRepository sessionRepository;
     private final TaskRepository taskRepository;
     private final SessionTasksRepository sessionTasksRepository;
+    private final ISessionService sessionService;
 
-    public SessionTasksService(SessionRepository sessionRepository, TaskRepository taskRepository, SessionTasksRepository sessionTasksRepository) {
+    public SessionTasksService(SessionRepository sessionRepository, TaskRepository taskRepository, SessionTasksRepository sessionTasksRepository, ISessionService sessionService) {
         this.sessionRepository = sessionRepository;
         this.taskRepository = taskRepository;
         this.sessionTasksRepository = sessionTasksRepository;
+        this.sessionService = sessionService;
     }
 
 
     @Override
-    public SessionTasks startTask(Long sessionId, Long taskId) {
+    public SessionTasks startTask(Long sessionId, Long taskId, Long userId) {
+
         Optional<Session> sessionOptional = sessionRepository.findById(sessionId);
         if (sessionOptional.isEmpty()) {
             throw new SessionNotFoundException("Session not found with id: " + sessionId);
         }
         Session session = sessionOptional.get();
+
         SessionTasks sessionTasks = new SessionTasks();
-        sessionTasks.setSession(session);
+        if(!session.isActive()) {
+            Session newSession = sessionService.startSession(userId);
+            sessionTasks.setSession(newSession);
+        } else {
+            sessionTasks.setSession(session);
+        }
+
         Optional<Task> taskOptional = taskRepository.findById(taskId);
         if (taskOptional.isEmpty()) {
             throw new TaskNotFoundException("Task not found with id: " + taskId);

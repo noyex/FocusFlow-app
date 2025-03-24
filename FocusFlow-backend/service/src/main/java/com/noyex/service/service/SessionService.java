@@ -29,7 +29,7 @@ public class SessionService implements ISessionService {
 
 
     @Override
-    public Long startSession(Long userId) {
+    public Session startSession(Long userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("User not found with id: " + userId);
@@ -44,9 +44,9 @@ public class SessionService implements ISessionService {
         session.setBreakTime(0L);
         session.setTotalTime(0L);
         session.setTasksCompleted(0L);
+        session.setActive(true);
 
-        sessionRepository.save(session);
-        return session.getId();
+        return sessionRepository.save(session);
     }
 
     @Override
@@ -61,6 +61,7 @@ public class SessionService implements ISessionService {
         session.setWorkTime(session.getWorkTime() + workTimeMinutes);
 
         session.setBreakTime(0L);
+        session.setActive(false);
         return sessionRepository.save(session);
     }
 

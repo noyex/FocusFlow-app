@@ -40,11 +40,13 @@ public class Session {
     @Column(name = "break_time", nullable = false)
     private Long breakTime;
 
+    boolean isActive;
+
 
     public Session() {
     }
 
-    public Session(Long id, UserFocusDetails user, Long tasksCompleted, LocalDateTime realStartTime, LocalDateTime startTime, LocalDateTime endTime, Long totalTime, Long workTime, Long breakTime) {
+    public Session(Long id, UserFocusDetails user, Long tasksCompleted, LocalDateTime realStartTime, LocalDateTime startTime, LocalDateTime endTime, Long totalTime, Long workTime, Long breakTime, boolean isActive) {
         this.id = id;
         this.user = user;
         this.tasksCompleted = tasksCompleted;
@@ -54,6 +56,7 @@ public class Session {
         this.totalTime = totalTime;
         this.workTime = workTime;
         this.breakTime = breakTime;
+        this.isActive = isActive;
     }
 
     public Long getId() {
@@ -128,5 +131,13 @@ public class Session {
 
     public void setRealStartTime(LocalDateTime realStartTime) {
         this.realStartTime = realStartTime;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

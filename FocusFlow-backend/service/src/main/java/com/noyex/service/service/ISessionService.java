@@ -3,7 +3,7 @@ package com.noyex.service.service;
 import com.noyex.data.model.Session;
 
 public interface ISessionService {
-    Long startSession(Long userId);
+    Session startSession(Long userId);
 
     Session endSession(Long userId, Long sessionId);
 

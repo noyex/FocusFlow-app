@@ -22,7 +22,7 @@ public class SessionTasksController {
     @PostMapping("/start/{sessionId}/{taskId}")
     public ResponseEntity<SessionTasks> startTask(HttpServletRequest request, @PathVariable Long sessionId, @PathVariable Long taskId) {
         Long userId = getUserIdFromToken(request);
-        SessionTasks sessionTasks = sessionTasksService.startTask(sessionId, taskId);
+        SessionTasks sessionTasks = sessionTasksService.startTask(sessionId, taskId, userId);
         return ResponseEntity.ok(sessionTasks);
     }
 
