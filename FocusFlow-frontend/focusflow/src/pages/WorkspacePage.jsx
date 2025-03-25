@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Navbar from '../components/layout/Navbar';
 import ProjectService from '../services/ProjectService';
+import TaskService from '../services/TaskService';
+import CreateProjectModal from '../components/projects/CreateProjectModal';
+import CreateTaskModal from '../components/tasks/CreateTaskModal';
+import AddProjectButton from '../components/projects/AddProjectButton';
 import '../styles/pages/WorkspacePage.css';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -16,6 +20,20 @@ const WorkspacePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' lub 'list'
   const [sortOption, setSortOption] = useState('name'); // 'name', 'status', 'time'
+  const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
+  const [newProject, setNewProject] = useState({
+    name: '',
+    description: '',
+    due_to: ''
+  });
+  const [createProjectError, setCreateProjectError] = useState(null);
+  const [isCreateTaskModalOpen, setIsCreateTaskModalOpen] = useState(false);
+  const [newTask, setNewTask] = useState({
+    name: '',
+    estimatedTime: '',
+    priority: 'MEDIUM'
+  });
+  const [createTaskError, setCreateTaskError] = useState(null);
   const projectsPanelRef = useRef(null);
 
   // Pobierz wszystkie projekty i zadania
@@ -128,6 +146,68 @@ const WorkspacePage = () => {
     setSortOption(e.target.value);
   };
 
+  const handleCreateProject = async (e) => {
+    e.preventDefault();
+    try {
+      setCreateProjectError(null);
+      const createdProject = await ProjectService.createProject(newProject);
+      
+      // Dodaj nowy projekt do listy
+      setProjects(prevProjects => [...prevProjects, createdProject]);
+      
+      // Wybierz nowo utworzony projekt
+      setSelectedProject(createdProject);
+      setSelectedProjectTasks(createdProject.tasks || []);
+      
+      // Zamknij modal i zresetuj formularz
+      setIsCreateProjectModalOpen(false);
+      setNewProject({
+        name: '',
+        description: '',
+        due_to: ''
+      });
+    } catch (err) {
+      console.error('Error while creating project:', err);
+      setCreateProjectError('Nie udało się utworzyć projektu. Spróbuj ponownie.');
+    }
+  };
+
+  const handleCreateTask = async (e) => {
+    e.preventDefault();
+    try {
+      setCreateTaskError(null);
+      const taskData = {
+        ...newTask,
+        projectId: selectedProject.id
+      };
+      
+      const createdTask = await TaskService.createTask(taskData);
+      
+      // Aktualizuj listę zadań w projekcie
+      setSelectedProjectTasks(prevTasks => [...prevTasks, createdTask]);
+      
+      // Aktualizuj licznik zadań w projekcie
+      setProjects(prevProjects => 
+        prevProjects.map(project => 
+          project.id === selectedProject.id
+            ? { ...project, totalTasks: project.totalTasks + 1 }
+            : project
+        )
+      );
+      
+      // Zamknij modal i zresetuj formularz
+      setIsCreateTaskModalOpen(false);
+      setNewTask({
+        name: '',
+        estimatedTime: '',
+        priority: 'MEDIUM'
+      });
+    } catch (err) {
+      console.error('Error while creating task:', err);
+      setCreateTaskError('Nie udało się utworzyć zadania. Spróbuj ponownie.');
+    }
+  };
+
   // Filtry
   const filteredProjects = searchTerm 
     ? projects.filter(project => 
@@ -220,6 +300,15 @@ const WorkspacePage = () => {
               </button>
             )}
           </motion.div>
+          
+          <motion.div
+            className="header-actions"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <AddProjectButton onClick={() => setIsCreateProjectModalOpen(true)} />
+          </motion.div>
         </div>
         
         <div className={`workspace-container ${isProjectListCollapsed ? 'collapsed-projects' : ''}`}>
@@ -302,7 +391,7 @@ const WorkspacePage = () => {
                           <line x1="12" y1="8" x2="12" y2="16"></line>
                         </svg>
                         <p>{searchTerm ? 'Brak wyników wyszukiwania' : 'Brak projektów'}</p>
-                        <button className="add-button">Dodaj projekt</button>
+                        <AddProjectButton onClick={() => setIsCreateProjectModalOpen(true)} />
                       </div>
                     )}
                   </div>
@@ -388,7 +477,10 @@ const WorkspacePage = () => {
                               <option value="time">Sortuj: Czas</option>
                             </select>
                           </div>
-                          <button className="add-task-btn">
+                          <button 
+                            className="add-task-btn"
+                            onClick={() => setIsCreateTaskModalOpen(true)}
+                          >
                             <span>+</span> Dodaj zadanie
                           </button>
                         </div>
@@ -567,6 +659,31 @@ const WorkspacePage = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Modal tworzenia projektu */}
+      <AnimatePresence>
+        <CreateProjectModal
+          isOpen={isCreateProjectModalOpen}
+          onClose={() => setIsCreateProjectModalOpen(false)}
+          onSubmit={handleCreateProject}
+          projectData={newProject}
+          onProjectDataChange={setNewProject}
+          error={createProjectError}
+        />
+      </AnimatePresence>
+
+      {/* Modal tworzenia zadania */}
+      <AnimatePresence>
+        <CreateTaskModal
+          isOpen={isCreateTaskModalOpen}
+          onClose={() => setIsCreateTaskModalOpen(false)}
+          onSubmit={handleCreateTask}
+          taskData={newTask}
+          onTaskDataChange={setNewTask}
+          error={createTaskError}
+          projectId={selectedProject?.id}
+        />
+      </AnimatePresence>
     </div>
   );
 };

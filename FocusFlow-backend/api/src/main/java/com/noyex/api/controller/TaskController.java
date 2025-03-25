@@ -60,9 +60,10 @@ public class TaskController {
         return ResponseEntity.ok(tasks);
     }
 
-    @PutMapping("/status/done/{id}")
-    public ResponseEntity.BodyBuilder statusDone(@PathVariable Long id) {
-        taskService.statusDone(id);
+    @PutMapping("/status/done/{taskId}")
+    public ResponseEntity.BodyBuilder statusDone(@PathVariable Long taskId, HttpServletRequest request) {
+        Long userId = getUserIdFromToken(request);
+        taskService.statusDone(taskId, userId);
         return ResponseEntity.ok();
     }
 

@@ -2,8 +2,10 @@ package com.noyex.api.controller;
 
 import com.noyex.auth.service.JwtService;
 import com.noyex.data.model.Session;
+import com.noyex.data.model.SessionTasks;
 import com.noyex.service.service.ISessionService;
 import com.noyex.service.service.SessionService;
+import com.noyex.service.service.SessionTasksService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +16,12 @@ public class SessionController {
 
     private final ISessionService sessionService;
     private final JwtService jwtService;
+    private final SessionTasksService sessionTasksService;
 
-    public SessionController(ISessionService sessionService, JwtService jwtService) {
+    public SessionController(ISessionService sessionService, JwtService jwtService, SessionTasksService sessionTasksService) {
         this.sessionService = sessionService;
         this.jwtService = jwtService;
+        this.sessionTasksService = sessionTasksService;
     }
 
     @PostMapping("/start")
@@ -30,6 +34,10 @@ public class SessionController {
     @PutMapping("/end/{sessionId}")
     public Session endSession(HttpServletRequest request, @PathVariable Long sessionId) {
         Long userId = getUserIdFromToken(request);
+        SessionTasks sessionTasks = sessionTasksService.getActiveSessionTasksByUserId(userId);
+        if (sessionTasks != null) {
+            sessionTasksService.endTask(sessionTasks.getId());
+        }
         return sessionService.endSession(userId, sessionId);
     }
 

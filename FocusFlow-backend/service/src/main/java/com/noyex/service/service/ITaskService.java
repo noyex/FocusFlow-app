@@ -13,5 +13,5 @@ public interface ITaskService {
     void deleteTask(Long taskId, Long userId);
     List<Task> getAllTasksByProjectId(Long projectId);
     void statusInProgress(Long taskId);
-    void statusDone(Long taskId);
+    void statusDone(Long taskId, Long userId);
 }

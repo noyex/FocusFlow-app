@@ -1,9 +1,11 @@
 package com.noyex.service.service;
 
 import com.noyex.data.model.Session;
+import com.noyex.data.model.SessionTasks;
 import com.noyex.data.model.User;
 import com.noyex.data.model.UserFocusDetails;
 import com.noyex.data.repository.SessionRepository;
+import com.noyex.data.repository.SessionTasksRepository;
 import com.noyex.data.repository.UserFocusDetailsRepository;
 import com.noyex.data.repository.UserRepository;
 import com.noyex.service.exceptions.SessionNotFoundException;
@@ -62,6 +64,7 @@ public class SessionService implements ISessionService {
 
         session.setBreakTime(0L);
         session.setActive(false);
+
         return sessionRepository.save(session);
     }
 

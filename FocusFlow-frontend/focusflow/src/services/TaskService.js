@@ -49,15 +49,24 @@ const TaskService = {
    * @param {Object} taskData - New task data
    * @returns {Promise} Promise containing created task
    */
-  createTask: async (projectId, taskData) => {
+  createTask: async (taskData) => {
     try {
-      const response = await axios.post(API_ENDPOINTS.TASKS.CREATE(projectId), taskData, {
-        headers: getAuthHeaders()
+      const response = await fetch(API_ENDPOINTS.TASKS.CREATE, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...getAuthHeaders()
+        },
+        body: JSON.stringify(taskData)
       });
-      
-      return response.data;
+
+      if (!response.ok) {
+        throw new Error('Nie udało się utworzyć zadania');
+      }
+
+      return await response.json();
     } catch (error) {
-      console.error('Error while creating task:', error);
+      console.error('Error creating task:', error);
       throw error;
     }
   },

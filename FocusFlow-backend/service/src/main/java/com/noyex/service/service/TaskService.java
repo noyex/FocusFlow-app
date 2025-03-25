@@ -1,18 +1,12 @@
 package com.noyex.service.service;
 
+import com.noyex.data.model.*;
 import com.noyex.data.model.DTOs.TaskDto;
 import com.noyex.data.model.DTOs.UpdateTaskDto;
 import com.noyex.data.model.DTOs.UserDto;
-import com.noyex.data.model.Project;
-import com.noyex.data.model.Task;
-import com.noyex.data.model.User;
-import com.noyex.data.model.UserFocusDetails;
 import com.noyex.data.model.enums.Priority;
 import com.noyex.data.model.enums.Status;
-import com.noyex.data.repository.ProjectRepository;
-import com.noyex.data.repository.TaskRepository;
-import com.noyex.data.repository.UserFocusDetailsRepository;
-import com.noyex.data.repository.UserRepository;
+import com.noyex.data.repository.*;
 import com.noyex.service.exceptions.ProjectNotFoundException;
 import com.noyex.service.exceptions.TaskNotFoundException;
 import org.springframework.stereotype.Service;
@@ -29,12 +23,14 @@ public class TaskService implements ITaskService{
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final UserFocusDetailsRepository userFocusDetailsRepository;
+    private final SessionRepository sessionRepository;
 
-    public TaskService(TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository, UserFocusDetailsRepository userFocusDetailsRepository) {
+    public TaskService(TaskRepository taskRepository, UserRepository userRepository, ProjectRepository projectRepository, UserFocusDetailsRepository userFocusDetailsRepository, SessionRepository sessionRepository) {
         this.taskRepository = taskRepository;
         this.userRepository = userRepository;
         this.projectRepository = projectRepository;
         this.userFocusDetailsRepository = userFocusDetailsRepository;
+        this.sessionRepository = sessionRepository;
     }
 
 
@@ -132,12 +128,30 @@ public class TaskService implements ITaskService{
     }
 
     @Override
-    public void statusDone(Long taskId) {
+    public void statusDone(Long taskId, Long userId) {
         Optional<Task> task = taskRepository.findById(taskId);
         if(task.isPresent()) {
             Task existingTask = task.get();
             existingTask.setStatus(Status.DONE);
+            existingTask.setCompleted(true);
             existingTask.setActualEndTime(LocalDateTime.now());
+
+            // zwiekszam liczbe zadan ukonczonych w projekcie
+            Project existingProject = task.get().getProject();
+            existingProject.setTotalTasks(existingProject.getTotalTasks() + 1);
+
+            // zwiekszam liczbe zadan ukonczonych w UserFocusDetails
+            UserFocusDetails userFocusDetails = userFocusDetailsRepository.findByUserId(userId);
+            userFocusDetails.setTotalTasksDone(userFocusDetails.getTotalTasksDone() + 1);
+            userFocusDetailsRepository.save(userFocusDetails);
+
+            // dodaje wykonane zadania do aktywnej sesji
+            Session userSession = sessionRepository.findByUserIdAndIsActive(userId, true);
+            if(userSession != null) {
+                userSession.setTasksCompleted(userSession.getTasksCompleted() + 1);
+                sessionRepository.save(userSession);
+            }
+
             taskRepository.save(existingTask);
         } else {
             throw new TaskNotFoundException("Task not found");

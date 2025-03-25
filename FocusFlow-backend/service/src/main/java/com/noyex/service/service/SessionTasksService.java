@@ -43,6 +43,7 @@ public class SessionTasksService implements ISessionTasksService {
         Task task = taskOptional.get();
         task.setStatus(Status.IN_PROGRESS);
         sessionTasks.setTask(task);
+        sessionTasks.setActive(true);
 
         sessionTasks.setStartTime(LocalDateTime.now());
         sessionTasks.setTotalTime(0L);
@@ -69,6 +70,22 @@ public class SessionTasksService implements ISessionTasksService {
         sessionTasks.setEndTime(LocalDateTime.now());
         Long duration = Duration.between(sessionTasks.getStartTime(), sessionTasks.getEndTime()).toMinutes();
         sessionTasks.setTotalTime(duration);
+        sessionTasks.setActive(false);
         return sessionTasksRepository.save(sessionTasks);
     }
+
+    @Override
+    public SessionTasks getActiveSessionTasksByUserId(Long userId) {
+        Session session = sessionService.getCurrentSessionByUserId(userId);
+        if(session == null) {
+            return null;
+        }
+        SessionTasks sessionTasks = sessionTasksRepository.findBySessionIdAndIsActive(session.getId(), true);
+        if(sessionTasks == null) {
+            return null;
+        }
+        return sessionTasks;
+    }
+
+
 }

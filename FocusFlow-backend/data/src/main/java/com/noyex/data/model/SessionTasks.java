@@ -34,16 +34,19 @@ public class SessionTasks {
     @Column(name = "total_time", nullable = false)
     private Long totalTime = 0L;
 
+    private boolean isActive;
+
     public SessionTasks() {
     }
 
-    public SessionTasks(Long id, Session session, Task task, LocalDateTime startTime, LocalDateTime endTime, Long totalTime) {
+    public SessionTasks(Long id, Session session, Task task, LocalDateTime startTime, LocalDateTime endTime, Long totalTime, boolean isActive) {
         this.id = id;
         this.session = session;
         this.task = task;
         this.startTime = startTime;
         this.endTime = endTime;
         this.totalTime = totalTime;
+        this.isActive = isActive;
     }
 
     public Long getId() {
@@ -92,5 +95,13 @@ public class SessionTasks {
 
     public void setTotalTime(Long totalTime) {
         this.totalTime = totalTime;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

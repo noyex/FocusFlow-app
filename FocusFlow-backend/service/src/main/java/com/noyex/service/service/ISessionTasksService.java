@@ -5,4 +5,5 @@ import com.noyex.data.model.SessionTasks;
 public interface ISessionTasksService {
     SessionTasks startTask(Long taskId, Long userId);
     SessionTasks endTask(Long sessionTasksId);
+    SessionTasks getActiveSessionTasksByUserId(Long userId);
 }
