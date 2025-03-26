@@ -32,7 +32,8 @@ export const API_ENDPOINTS = {
     CREATE: `${API_BASE_URL}/tasks/create`,
     UPDATE: (taskId) => `${API_BASE_URL}/tasks/task/${taskId}`,
     COMPLETE: (taskId) => `${API_BASE_URL}/tasks/task/${taskId}/complete`,
-    DELETE: (taskId) => `${API_BASE_URL}/tasks/task/${taskId}`
+    DELETE: (taskId) => `${API_BASE_URL}/tasks/task/${taskId}`,
+    STATUS_DONE: (taskId) => `${API_BASE_URL}/tasks/status/done/${taskId}`
   },
   
   // Users

@@ -730,6 +730,18 @@
   border-color: rgba(66, 211, 146, 0.3);
 }
 
+.complete-task-btn.loading {
+  position: relative;
+  cursor: not-allowed;
+  opacity: 0.8;
+  background: rgba(147, 112, 219, 0.25);
+}
+
+.complete-task-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 /* Task list view */
 .tasks-list-view {
   display: flex;
@@ -794,6 +806,17 @@
 .task-checkbox.checked {
   background: rgba(66, 211, 146, 0.15);
   border-color: rgba(66, 211, 146, 0.3);
+}
+
+.task-checkbox.loading {
+  cursor: not-allowed;
+  position: relative;
+  animation: pulse 1.5s infinite;
+}
+
+.task-checkbox:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .task-checkbox svg {
@@ -1060,13 +1083,14 @@
 
 /* Wskaźnik ładowania */
 .loading-indicator {
-  width: 40px;
-  height: 40px;
-  border: 3px solid rgba(147, 112, 219, 0.1);
-  border-top: 3px solid rgba(147, 112, 219, 0.6);
+  position: absolute;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
-  margin: 20px auto;
-  animation: spin 1.2s linear infinite;
+  border: 2px solid transparent;
+  border-top-color: #f5f5f7;
+  border-right-color: #f5f5f7;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {

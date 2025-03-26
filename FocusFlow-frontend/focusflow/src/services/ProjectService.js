@@ -15,10 +15,16 @@ const ProjectService = {
         headers: getAuthHeaders()
       });
       
-      return response.data;
+      // Upewnij się, że zawsze zwracamy tablicę
+      const projects = response.data;
+      if (!projects) return [];
+      
+      // Jeśli API zwróciło pojedynczy obiekt zamiast tablicy, opakuj go w tablicę
+      return Array.isArray(projects) ? projects : [projects];
     } catch (error) {
       console.error('Error while fetching projects:', error);
-      throw error;
+      // Zwróć pustą tablicę zamiast rzucać wyjątek
+      return [];
     }
   },
 

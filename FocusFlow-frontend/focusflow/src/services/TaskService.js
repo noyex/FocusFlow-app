@@ -97,15 +97,31 @@ const TaskService = {
    * @returns {Promise} Promise containing updated task
    */
   markTaskAsCompleted: async (taskId, isCompleted) => {
+    console.log(`Oznaczam zadanie ${taskId} jako ${isCompleted ? 'wykonane' : 'niewykonane'}`);
+    
     try {
-      const response = await axios.patch(API_ENDPOINTS.TASKS.COMPLETE(taskId), { completed: isCompleted }, {
-        headers: getAuthHeaders()
-      });
-      
-      return response.data;
+      // Jeśli zadanie ma być oznaczone jako wykonane, używamy nowego endpointu
+      if (isCompleted) {
+        console.log(`Używam endpointu: ${API_ENDPOINTS.TASKS.STATUS_DONE(taskId)}`);
+        const response = await axios.put(API_ENDPOINTS.TASKS.STATUS_DONE(taskId), {}, {
+          headers: getAuthHeaders()
+        });
+        console.log('Odpowiedź z API:', response.data);
+        return response.data || { completed: true };
+      } else {
+        console.log(`Używam endpointu: ${API_ENDPOINTS.TASKS.COMPLETE(taskId)}`);
+        // Dla cofnięcia oznaczenia jako wykonane, używamy starego endpointu
+        const response = await axios.patch(API_ENDPOINTS.TASKS.COMPLETE(taskId), { completed: false }, {
+          headers: getAuthHeaders()
+        });
+        console.log('Odpowiedź z API:', response.data);
+        return response.data || { completed: false };
+      }
     } catch (error) {
       console.error(`Error while marking task with ID ${taskId} as ${isCompleted ? 'completed' : 'incomplete'}:`, error);
-      throw error;
+      console.error('Pełna informacja o błędzie:', error.response ? error.response.data : 'No response data');
+      // Zamiast rzucać wyjątek, zwróć obiekt z informacją o błędzie
+      return { error: true, message: error.message };
     }
   },
 

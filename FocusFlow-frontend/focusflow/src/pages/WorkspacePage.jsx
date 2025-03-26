@@ -34,6 +34,7 @@ const WorkspacePage = () => {
   });
   const [createTaskError, setCreateTaskError] = useState(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [completingTaskIds, setCompletingTaskIds] = useState([]);
   const projectsPanelRef = useRef(null);
 
   // Funkcja do odświeżania danych
@@ -42,19 +43,41 @@ const WorkspacePage = () => {
       setIsRefreshing(true);
       setError(null);
       
+      console.log('Rozpoczynam odświeżanie danych...');
       const projectsData = await ProjectService.getAllProjects();
-      setProjects(projectsData);
+      // Upewnij się, że projectsData jest tablicą
+      const validProjectsData = Array.isArray(projectsData) ? projectsData : [];
+      console.log('Pobrano projekty:', validProjectsData);
+      
+      // Zaktualizuj stan projektów
+      setProjects(validProjectsData);
       
       // Jeśli był wybrany projekt, znajdź go w nowych danych
       if (selectedProject) {
-        const updatedSelectedProject = projectsData.find(p => p.id === selectedProject.id);
+        const updatedSelectedProject = validProjectsData.find(p => p.id === selectedProject.id);
         if (updatedSelectedProject) {
+          console.log('Zaktualizowano wybrany projekt:', updatedSelectedProject);
           setSelectedProject(updatedSelectedProject);
           setSelectedProjectTasks(updatedSelectedProject.tasks || []);
+        } else {
+          console.log('Nie znaleziono wybranego projektu po odświeżeniu danych');
+          // Jeśli nie znaleziono projektu, zresetuj stan
+          if (validProjectsData.length > 0) {
+            setSelectedProject(validProjectsData[0]);
+            setSelectedProjectTasks(validProjectsData[0].tasks || []);
+          } else {
+            setSelectedProject(null);
+            setSelectedProjectTasks([]);
+          }
         }
+      } else if (validProjectsData.length > 0) {
+        // Jeśli nie ma wybranego projektu, ale mamy projekty, wybierz pierwszy
+        setSelectedProject(validProjectsData[0]);
+        setSelectedProjectTasks(validProjectsData[0].tasks || []);
       }
       
       setIsRefreshing(false);
+      console.log('Zakończono odświeżanie danych');
     } catch (err) {
       console.error('Error while refreshing data:', err);
       setError('Failed to refresh data. Please try again.');
@@ -69,11 +92,13 @@ const WorkspacePage = () => {
         setError(null);
         
         const projectsData = await ProjectService.getAllProjects();
-        setProjects(projectsData);
+        // Upewnij się, że projectsData jest tablicą
+        const validProjectsData = Array.isArray(projectsData) ? projectsData : [];
+        setProjects(validProjectsData);
         
-        if (projectsData.length > 0 && !selectedProject) {
-          setSelectedProject(projectsData[0]);
-          setSelectedProjectTasks(projectsData[0].tasks || []);
+        if (validProjectsData.length > 0 && !selectedProject) {
+          setSelectedProject(validProjectsData[0]);
+          setSelectedProjectTasks(validProjectsData[0].tasks || []);
         }
         
         setIsLoading(false);
@@ -105,29 +130,53 @@ const WorkspacePage = () => {
   };
 
   const markTaskAsCompleted = async (taskId, e) => {
-    e.stopPropagation();
+    // e.stopPropagation() i e.preventDefault() są już obsługiwane w miejscu wywołania
+    
+    // Sprawdź, czy mamy dostęp do wybranego projektu
+    if (!selectedProject) {
+      console.error('No project selected');
+      return;
+    }
     
     // Znajdź zadanie, którego status zmieniamy
     const taskToUpdate = selectedProjectTasks.find(t => t.id === taskId);
-    const newCompletedStatus = !taskToUpdate.completed;
+    
+    // Sprawdź, czy zadanie istnieje
+    if (!taskToUpdate) {
+      console.error(`Task with id ${taskId} not found`);
+      return;
+    }
+    
+    // Jeśli zadanie jest już oznaczone jako wykonane lub jest w trakcie oznaczania, nie rób nic
+    if (taskToUpdate.completed || completingTaskIds.includes(taskId)) {
+      return;
+    }
+    
+    // Dodaj zadanie do listy zadań w trakcie oznaczania jako wykonane
+    setCompletingTaskIds(prev => [...prev, taskId]);
     
     // Tymczasowo zaktualizuj UI
     const updatedTasks = selectedProjectTasks.map(task => 
-      task.id === taskId ? { ...task, completed: newCompletedStatus } : task
+      task.id === taskId ? { ...task, completed: true } : task
     );
     
     setSelectedProjectTasks(updatedTasks);
+    
+    // Upewnij się, że projects jest tablicą przed użyciem map
+    if (!Array.isArray(projects)) {
+      console.error('Projects is not an array');
+      setCompletingTaskIds(prev => prev.filter(id => id !== taskId));
+      return;
+    }
     
     const updatedProjects = projects.map(project => 
       project.id === selectedProject.id 
         ? { 
             ...project, 
             tasks: project.tasks?.map(t => 
-              t.id === taskId ? { ...t, completed: newCompletedStatus } : t
+              t.id === taskId ? { ...t, completed: true } : t
             ),
-            completedTasks: newCompletedStatus 
-              ? (project.completedTasks || 0) + 1 
-              : (project.completedTasks || 0) - 1
+            completedTasks: (project.completedTasks || 0) + 1 
           } 
         : project
     );
@@ -136,15 +185,67 @@ const WorkspacePage = () => {
     
     // Wyślij zapytanie do API
     try {
-      await TaskService.markTaskAsCompleted(taskId, newCompletedStatus);
+      const result = await TaskService.markTaskAsCompleted(taskId, true);
       
-      // Odśwież dane z serwera
+      // Sprawdź, czy wystąpił błąd
+      if (result && result.error) {
+        console.error('Error from API:', result.message);
+        // Cofnij tymczasowe zmiany w UI
+        setSelectedProjectTasks(selectedProjectTasks);
+        setProjects(projects);
+        // Pokaż komunikat o błędzie
+        setError(`Failed to mark task as completed: ${result.message}`);
+        return;
+      }
+      
+      console.log('Zadanie zostało oznaczone jako wykonane, odświeżam dane...');
+      
+      // Pobierz najnowsze projekty
+      try {
+        const updatedProjects = await ProjectService.getAllProjects();
+        if (Array.isArray(updatedProjects)) {
+          console.log('Pobrano zaktualizowane projekty:', updatedProjects);
+          
+          // Aktualizuj projekty
+          setProjects(updatedProjects);
+          
+          // Jeśli był wybrany projekt, znajdź go w nowych danych
+          if (selectedProject) {
+            const freshSelectedProject = updatedProjects.find(p => p.id === selectedProject.id);
+            if (freshSelectedProject) {
+              console.log('Aktualizuję wybrany projekt:', freshSelectedProject);
+              setSelectedProject(freshSelectedProject);
+              setSelectedProjectTasks(freshSelectedProject.tasks || []);
+            }
+          }
+        }
+      } catch (refreshErr) {
+        console.error('Error while refreshing projects after task completion:', refreshErr);
+      }
+      
+      // Odśwież dane z serwera przez standardową funkcję
       await refreshData();
+      
+      // Dodatkowo pobierz projekty jeszcze raz po krótkim czasie, aby upewnić się, że mamy aktualne dane
+      setTimeout(async () => {
+        try {
+          console.log('Wykonuję dodatkowe odświeżanie projektów...');
+          await refreshData();
+        } catch (err) {
+          console.error('Error during additional refresh:', err);
+        }
+      }, 1000);
+      
     } catch (err) {
       console.error('Error while marking task as completed:', err);
       // Cofnij tymczasowe zmiany w UI jeśli api call się nie powiódł
       setSelectedProjectTasks(selectedProjectTasks);
       setProjects(projects);
+      // Pokaż komunikat o błędzie
+      setError('Failed to mark task as completed. Please try again.');
+    } finally {
+      // Usuń zadanie z listy zadań w trakcie oznaczania jako wykonane
+      setCompletingTaskIds(prev => prev.filter(id => id !== taskId));
     }
   };
 
@@ -228,17 +329,25 @@ const WorkspacePage = () => {
   };
 
   const filteredProjects = searchTerm 
-    ? projects.filter(project => 
+    ? (Array.isArray(projects) ? projects : []).filter(project => 
         project.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
-    : projects;
+    : (Array.isArray(projects) ? projects : []);
 
   const filteredAndSortedTasks = (() => {
+    // Upewnij się, że selectedProjectTasks jest tablicą
+    const validTasks = Array.isArray(selectedProjectTasks) ? selectedProjectTasks : [];
+    
     let tasksToProcess = searchTerm 
-      ? selectedProjectTasks.filter(task => 
+      ? validTasks.filter(task => 
           task.name.toLowerCase().includes(searchTerm.toLowerCase())
         )
-      : selectedProjectTasks;
+      : validTasks;
+    
+    // Upewnij się, że mamy tablicę przed sortowaniem
+    if (!Array.isArray(tasksToProcess)) {
+      return [];
+    }
     
     return tasksToProcess.sort((a, b) => {
       switch(sortOption) {
@@ -540,10 +649,19 @@ const WorkspacePage = () => {
                               </div>
                               <div className="task-actions">
                                 <button 
-                                  className={`complete-task-btn ${task.completed ? 'completed' : ''}`}
-                                  onClick={(e) => markTaskAsCompleted(task.id, e)}
+                                  className={`complete-task-btn ${task.completed ? 'completed' : ''} ${completingTaskIds.includes(task.id) ? 'loading' : ''}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    markTaskAsCompleted(task.id, e);
+                                  }}
+                                  disabled={task.completed || completingTaskIds.includes(task.id)}
                                 >
-                                  {task.completed ? 'Completed' : 'Mark as completed'}
+                                  {task.completed 
+                                    ? 'Completed' 
+                                    : completingTaskIds.includes(task.id) 
+                                      ? 'Completing...' 
+                                      : 'Mark as completed'}
                                 </button>
                               </div>
                             </motion.div>
@@ -562,14 +680,22 @@ const WorkspacePage = () => {
                             >
                               <div className="task-list-checkbox">
                                 <button 
-                                  className={`task-checkbox ${task.completed ? 'checked' : ''}`}
-                                  onClick={(e) => markTaskAsCompleted(task.id, e)}
-                                  aria-label={task.completed ? 'Mark as incomplete' : 'Mark as completed'}
+                                  className={`task-checkbox ${task.completed ? 'checked' : ''} ${completingTaskIds.includes(task.id) ? 'loading' : ''}`}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    markTaskAsCompleted(task.id, e);
+                                  }}
+                                  disabled={task.completed || completingTaskIds.includes(task.id)}
+                                  aria-label={task.completed ? 'Completed' : 'Mark as completed'}
                                 >
                                   {task.completed && (
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                       <polyline points="20 6 9 17 4 12"></polyline>
                                     </svg>
+                                  )}
+                                  {completingTaskIds.includes(task.id) && (
+                                    <span className="loading-indicator"></span>
                                   )}
                                 </button>
                               </div>

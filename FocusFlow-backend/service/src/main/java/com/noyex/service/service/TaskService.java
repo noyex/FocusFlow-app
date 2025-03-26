@@ -138,7 +138,7 @@ public class TaskService implements ITaskService{
 
             // zwiekszam liczbe zadan ukonczonych w projekcie
             Project existingProject = task.get().getProject();
-            existingProject.setTotalTasks(existingProject.getTotalTasks() + 1);
+            existingProject.setCompletedTasks(existingProject.getCompletedTasks() + 1);
 
             // zwiekszam liczbe zadan ukonczonych w UserFocusDetails
             UserFocusDetails userFocusDetails = userFocusDetailsRepository.findByUserId(userId);
