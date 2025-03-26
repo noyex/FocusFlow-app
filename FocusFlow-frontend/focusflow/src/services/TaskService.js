@@ -61,7 +61,7 @@ const TaskService = {
       });
 
       if (!response.ok) {
-        throw new Error('Nie udało się utworzyć zadania');
+        throw new Error('Failed to create task');
       }
 
       return await response.json();
@@ -93,20 +93,18 @@ const TaskService = {
   /**
    * Marks task as completed/uncompleted
    * @param {number} taskId - Task ID
-   * @param {boolean} completed - Whether the task is completed
+   * @param {boolean} isCompleted - Whether the task is completed
    * @returns {Promise} Promise containing updated task
    */
-  markTaskAsCompleted: async (taskId, completed) => {
+  markTaskAsCompleted: async (taskId, isCompleted) => {
     try {
-      const response = await axios.put(
-        API_ENDPOINTS.TASKS.COMPLETE(taskId),
-        { completed },
-        { headers: getAuthHeaders() }
-      );
+      const response = await axios.patch(API_ENDPOINTS.TASKS.COMPLETE(taskId), { completed: isCompleted }, {
+        headers: getAuthHeaders()
+      });
       
       return response.data;
     } catch (error) {
-      console.error(`Error while marking task with ID ${taskId} as completed:`, error);
+      console.error(`Error while marking task with ID ${taskId} as ${isCompleted ? 'completed' : 'incomplete'}:`, error);
       throw error;
     }
   },

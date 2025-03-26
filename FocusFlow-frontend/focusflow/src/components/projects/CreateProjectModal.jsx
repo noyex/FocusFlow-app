@@ -27,7 +27,7 @@ const CreateProjectModal = ({
         onClick={e => e.stopPropagation()}
       >
         <div className="modal-header">
-          <h2>Nowy projekt</h2>
+          <h2>New project</h2>
           <button 
             className="close-button"
             onClick={onClose}
@@ -38,7 +38,7 @@ const CreateProjectModal = ({
         
         <form onSubmit={onSubmit} className="create-project-form">
           <div className="form-group">
-            <label htmlFor="projectName">Nazwa projektu</label>
+            <label htmlFor="projectName">Project name</label>
             <input
               type="text"
               id="projectName"
@@ -49,7 +49,7 @@ const CreateProjectModal = ({
           </div>
           
           <div className="form-group">
-            <label htmlFor="projectDescription">Opis</label>
+            <label htmlFor="projectDescription">Description</label>
             <textarea
               id="projectDescription"
               value={projectData.description}
@@ -59,7 +59,7 @@ const CreateProjectModal = ({
           </div>
           
           <div className="form-group">
-            <label htmlFor="projectDueDate">Data zakończenia</label>
+            <label htmlFor="projectDueDate">Due date</label>
             <input
               type="date"
               id="projectDueDate"
@@ -79,13 +79,13 @@ const CreateProjectModal = ({
               className="cancel-button"
               onClick={onClose}
             >
-              Anuluj
+              Cancel
             </button>
             <button 
               type="submit" 
               className="submit-button"
             >
-              Utwórz projekt
+              Create project
             </button>
           </div>
         </form>

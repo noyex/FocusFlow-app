@@ -29,55 +29,52 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-// Komponent wyższego rzędu, który dodaje animacje do strony
-const withPageAnimation = (WrappedComponent) => {
-  const WithPageAnimation = (props) => {
-    // Konfiguracja animacji dla całej strony
+/**
+ * Higher-order component that adds page animations
+ * Usage:
+ * 1. Wrap your page component with withPageAnimation
+ * 2. Add animateElement prop to your page component:
+ *    <YourPage animateElement={animateElement} />
+ */
+const withPageAnimation = (Component) => {
+  return (props) => {
     const pageVariants = {
-      initial: { opacity: 0 },
-      animate: { opacity: 1 },
-      exit: { opacity: 0 }
-    };
-
-    // Domyślne wartości dla animacji elementów strony
-    const defaultElementAnimation = {
-      initial: { opacity: 0, y: -20 },
-      animate: { opacity: 1, y: 0 },
-      transition: { duration: 0.5 }
-    };
-
-    // Funkcja do animowania elementów wewnątrz strony
-    const animateElement = (index = 0, customAnimation = {}) => {
-      return {
-        initial: customAnimation.initial || defaultElementAnimation.initial,
-        animate: customAnimation.animate || defaultElementAnimation.animate,
+      initial: {
+        opacity: 0,
+        y: 10
+      },
+      animate: {
+        opacity: 1,
+        y: 0,
         transition: {
-          duration: customAnimation.transition?.duration || defaultElementAnimation.transition.duration,
-          delay: customAnimation.transition?.delay || (0.2 * index)
+          duration: 0.5
         }
-      };
+      },
+      exit: {
+        opacity: 0,
+        y: -10,
+        transition: {
+          duration: 0.3
+        }
+      }
     };
 
-    return (
-      <motion.div
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={pageVariants}
-        className="animated-page"
-      >
-        <WrappedComponent 
-          {...props} 
-          animateElement={animateElement} 
-        />
-      </motion.div>
-    );
-  };
+    // Higher-order component that adds animations to the page
+    const animateElement = (element, custom = {}) => {
+      return (
+        <motion.div
+          initial={custom.initial || pageVariants.initial}
+          animate={custom.animate || pageVariants.animate}
+          exit={custom.exit || pageVariants.exit}
+          {...custom}
+        >
+          {element}
+        </motion.div>
+      );
+    };
 
-  // Kopiujemy nazwę displayName dla lepszej jakości debugowania
-  WithPageAnimation.displayName = `WithPageAnimation(${getDisplayName(WrappedComponent)})`;
-  
-  return WithPageAnimation;
+    return <Component {...props} animateElement={animateElement} />;
+  };
 };
 
 // Funkcja pomocnicza do uzyskania nazwy komponentu

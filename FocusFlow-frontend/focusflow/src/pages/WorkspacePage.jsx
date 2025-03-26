@@ -9,7 +9,6 @@ import '../styles/pages/WorkspacePage.css';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const WorkspacePage = () => {
-  // State
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedProjectTasks, setSelectedProjectTasks] = useState([]);
@@ -18,8 +17,8 @@ const WorkspacePage = () => {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('tasks'); 
   const [searchTerm, setSearchTerm] = useState('');
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' lub 'list'
-  const [sortOption, setSortOption] = useState('name'); // 'name', 'status', 'time'
+  const [viewMode, setViewMode] = useState('grid');
+  const [sortOption, setSortOption] = useState('name');
   const [isCreateProjectModalOpen, setIsCreateProjectModalOpen] = useState(false);
   const [newProject, setNewProject] = useState({
     name: '',
@@ -34,9 +33,35 @@ const WorkspacePage = () => {
     priority: 'MEDIUM'
   });
   const [createTaskError, setCreateTaskError] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const projectsPanelRef = useRef(null);
 
-  // Pobierz wszystkie projekty i zadania
+  // Funkcja do odświeżania danych
+  const refreshData = async () => {
+    try {
+      setIsRefreshing(true);
+      setError(null);
+      
+      const projectsData = await ProjectService.getAllProjects();
+      setProjects(projectsData);
+      
+      // Jeśli był wybrany projekt, znajdź go w nowych danych
+      if (selectedProject) {
+        const updatedSelectedProject = projectsData.find(p => p.id === selectedProject.id);
+        if (updatedSelectedProject) {
+          setSelectedProject(updatedSelectedProject);
+          setSelectedProjectTasks(updatedSelectedProject.tasks || []);
+        }
+      }
+      
+      setIsRefreshing(false);
+    } catch (err) {
+      console.error('Error while refreshing data:', err);
+      setError('Failed to refresh data. Please try again.');
+      setIsRefreshing(false);
+    }
+  };
+
   useEffect(() => {
     const fetchProjectsAndTasks = async () => {
       try {
@@ -46,17 +71,15 @@ const WorkspacePage = () => {
         const projectsData = await ProjectService.getAllProjects();
         setProjects(projectsData);
         
-        // Automatycznie wybierz pierwszy projekt, jeśli żaden nie jest wybrany
         if (projectsData.length > 0 && !selectedProject) {
           setSelectedProject(projectsData[0]);
-          // Zakładamy, że każdy projekt ma już tablicę zadań
           setSelectedProjectTasks(projectsData[0].tasks || []);
         }
         
         setIsLoading(false);
       } catch (err) {
         console.error('Error while fetching projects:', err);
-        setError('Nie udało się pobrać projektów. Sprawdź połączenie z serwerem.');
+        setError('Failed to load projects. Please check your connection.');
         setIsLoading(false);
       }
     };
@@ -64,7 +87,6 @@ const WorkspacePage = () => {
     fetchProjectsAndTasks();
   }, []);
 
-  // Aktualizuj zadania przy zmianie wybranego projektu
   useEffect(() => {
     if (selectedProject) {
       setSelectedProjectTasks(selectedProject.tasks || []);
@@ -73,7 +95,6 @@ const WorkspacePage = () => {
     }
   }, [selectedProject]);
 
-  // Handlers
   const handleProjectClick = (project) => {
     setSelectedProject(project);
     setSelectedProjectTasks(project.tasks || []);
@@ -83,51 +104,48 @@ const WorkspacePage = () => {
     setIsProjectListCollapsed(!isProjectListCollapsed);
   };
 
-  const markTaskAsCompleted = (taskId, e) => {
+  const markTaskAsCompleted = async (taskId, e) => {
     e.stopPropagation();
     
-    // Aktualizacja lokalnego stanu zadania
+    // Znajdź zadanie, którego status zmieniamy
+    const taskToUpdate = selectedProjectTasks.find(t => t.id === taskId);
+    const newCompletedStatus = !taskToUpdate.completed;
+    
+    // Tymczasowo zaktualizuj UI
     const updatedTasks = selectedProjectTasks.map(task => 
-      task.id === taskId ? { ...task, completed: !task.completed } : task
+      task.id === taskId ? { ...task, completed: newCompletedStatus } : task
     );
     
     setSelectedProjectTasks(updatedTasks);
     
-    // Aktualizacja zadania w projekcie
-    const taskToUpdate = selectedProjectTasks.find(t => t.id === taskId);
     const updatedProjects = projects.map(project => 
       project.id === selectedProject.id 
         ? { 
             ...project, 
-            tasks: project.tasks.map(t => 
-              t.id === taskId ? { ...t, completed: !t.completed } : t
+            tasks: project.tasks?.map(t => 
+              t.id === taskId ? { ...t, completed: newCompletedStatus } : t
             ),
-            completedTasks: taskToUpdate.completed 
-              ? project.completedTasks - 1 
-              : project.completedTasks + 1
+            completedTasks: newCompletedStatus 
+              ? (project.completedTasks || 0) + 1 
+              : (project.completedTasks || 0) - 1
           } 
         : project
     );
     
     setProjects(updatedProjects);
     
-    // Kod poniżej można odkomentować, gdy API będzie gotowe
-    /*
-    const toggleTaskCompletion = async () => {
-      try {
-        const task = selectedProjectTasks.find(t => t.id === taskId);
-        if (!task) return;
-        
-        const updatedTask = await TaskService.markTaskAsCompleted(taskId, !task.completed);
-        
-        // Aktualizacja po odpowiedzi z API
-      } catch (err) {
-        console.error('Error while marking task as completed:', err);
-      }
-    };
-    
-    toggleTaskCompletion();
-    */
+    // Wyślij zapytanie do API
+    try {
+      await TaskService.markTaskAsCompleted(taskId, newCompletedStatus);
+      
+      // Odśwież dane z serwera
+      await refreshData();
+    } catch (err) {
+      console.error('Error while marking task as completed:', err);
+      // Cofnij tymczasowe zmiany w UI jeśli api call się nie powiódł
+      setSelectedProjectTasks(selectedProjectTasks);
+      setProjects(projects);
+    }
   };
 
   const handleTabChange = (tab) => {
@@ -152,14 +170,14 @@ const WorkspacePage = () => {
       setCreateProjectError(null);
       const createdProject = await ProjectService.createProject(newProject);
       
-      // Dodaj nowy projekt do listy
+      // Tymczasowo zaktualizuj lokalny stan
       setProjects(prevProjects => [...prevProjects, createdProject]);
-      
-      // Wybierz nowo utworzony projekt
       setSelectedProject(createdProject);
       setSelectedProjectTasks(createdProject.tasks || []);
       
-      // Zamknij modal i zresetuj formularz
+      // Odśwież dane z serwera
+      await refreshData();
+      
       setIsCreateProjectModalOpen(false);
       setNewProject({
         name: '',
@@ -168,7 +186,7 @@ const WorkspacePage = () => {
       });
     } catch (err) {
       console.error('Error while creating project:', err);
-      setCreateProjectError('Nie udało się utworzyć projektu. Spróbuj ponownie.');
+      setCreateProjectError('Failed to create project. Please try again.');
     }
   };
 
@@ -183,10 +201,9 @@ const WorkspacePage = () => {
       
       const createdTask = await TaskService.createTask(taskData);
       
-      // Aktualizuj listę zadań w projekcie
+      // Tymczasowa aktualizacja UI dla lepszego UX
       setSelectedProjectTasks(prevTasks => [...prevTasks, createdTask]);
       
-      // Aktualizuj licznik zadań w projekcie
       setProjects(prevProjects => 
         prevProjects.map(project => 
           project.id === selectedProject.id
@@ -195,7 +212,9 @@ const WorkspacePage = () => {
         )
       );
       
-      // Zamknij modal i zresetuj formularz
+      // Odśwież dane z serwera
+      await refreshData();
+      
       setIsCreateTaskModalOpen(false);
       setNewTask({
         name: '',
@@ -204,27 +223,23 @@ const WorkspacePage = () => {
       });
     } catch (err) {
       console.error('Error while creating task:', err);
-      setCreateTaskError('Nie udało się utworzyć zadania. Spróbuj ponownie.');
+      setCreateTaskError('Failed to create task. Please try again.');
     }
   };
 
-  // Filtry
   const filteredProjects = searchTerm 
     ? projects.filter(project => 
         project.name.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : projects;
 
-  // Filtracja i sortowanie zadań
   const filteredAndSortedTasks = (() => {
-    // Najpierw filtrujemy zadania
     let tasksToProcess = searchTerm 
       ? selectedProjectTasks.filter(task => 
           task.name.toLowerCase().includes(searchTerm.toLowerCase())
         )
       : selectedProjectTasks;
     
-    // Następnie sortujemy
     return tasksToProcess.sort((a, b) => {
       switch(sortOption) {
         case 'name':
@@ -239,7 +254,6 @@ const WorkspacePage = () => {
     });
   })();
 
-  // Funkcje pomocnicze
   const renderCompletionPercentage = (completedTasks, totalTasks) => {
     const percentage = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
     return Math.round(percentage);
@@ -258,7 +272,6 @@ const WorkspacePage = () => {
     }
   };
 
-  // Renderowanie
   return (
     <div className="workspace-page">
       <Navbar navType="dashboard" />
@@ -285,7 +298,7 @@ const WorkspacePage = () => {
             </svg>
             <input 
               type="text" 
-              placeholder="Szukaj projektów i zadań..." 
+              placeholder="Search projects and tasks..." 
               value={searchTerm}
               onChange={handleSearchChange}
               className="search-input"
@@ -294,7 +307,7 @@ const WorkspacePage = () => {
               <button 
                 className="clear-search" 
                 onClick={() => setSearchTerm('')}
-                aria-label="Wyczyść wyszukiwanie"
+                aria-label="Clear search"
               >
                 ✕
               </button>
@@ -312,7 +325,6 @@ const WorkspacePage = () => {
         </div>
         
         <div className={`workspace-container ${isProjectListCollapsed ? 'collapsed-projects' : ''}`}>
-          {/* Panel projektów */}
           <motion.div 
             layout
             ref={projectsPanelRef}
@@ -325,7 +337,7 @@ const WorkspacePage = () => {
               <button 
                 className="expand-btn" 
                 onClick={handleToggleProjectList}
-                aria-label="Rozwiń panel projektów"
+                aria-label="Expand projects panel"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="9 18 15 12 9 6"></polyline>
@@ -334,11 +346,11 @@ const WorkspacePage = () => {
             ) : (
               <>
                 <div className="panel-header">
-                  <h2>Projekty</h2>
+                  <h2>Projects</h2>
                   <button 
                     className="collapse-btn" 
                     onClick={handleToggleProjectList}
-                    aria-label="Zwiń panel projektów"
+                    aria-label="Collapse projects panel"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="15 18 9 12 15 6"></polyline>
@@ -376,7 +388,7 @@ const WorkspacePage = () => {
                             </div>
                             <div className="task-count">
                               <span className="task-count-number">{project.completedTasks} / {project.totalTasks}</span>
-                              <span className="task-count-label">zadań</span>
+                              <span className="task-count-label">tasks</span>
                             </div>
                           </div>
                         </div>
@@ -390,7 +402,7 @@ const WorkspacePage = () => {
                           <line x1="8" y1="12" x2="16" y2="12"></line>
                           <line x1="12" y1="8" x2="12" y2="16"></line>
                         </svg>
-                        <p>{searchTerm ? 'Brak wyników wyszukiwania' : 'Brak projektów'}</p>
+                        <p>{searchTerm ? 'No search results' : 'No projects'}</p>
                         <AddProjectButton onClick={() => setIsCreateProjectModalOpen(true)} />
                       </div>
                     )}
@@ -400,7 +412,6 @@ const WorkspacePage = () => {
             )}
           </motion.div>
           
-          {/* Panel zawartości */}
           <motion.div 
             layout
             className="content-panel"
@@ -413,7 +424,7 @@ const WorkspacePage = () => {
                 className={`tab-button ${activeTab === 'tasks' ? 'active' : ''}`}
                 onClick={() => handleTabChange('tasks')}
               >
-                Zadania
+                Tasks
               </button>
               <button 
                 className={`tab-button ${activeTab === 'pomodoro' ? 'active' : ''}`}
@@ -436,13 +447,13 @@ const WorkspacePage = () => {
                   {selectedProject ? (
                     <>
                       <div className="content-header">
-                        <h2>Zadania: {selectedProject.name}</h2>
+                        <h2>Tasks: {selectedProject.name}</h2>
                         <div className="tasks-controls">
                           <div className="view-controls">
                             <button 
                               className={`view-button ${viewMode === 'grid' ? 'active' : ''}`} 
                               onClick={() => handleViewModeChange('grid')}
-                              aria-label="Widok siatki"
+                              aria-label="Grid view"
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <rect x="3" y="3" width="7" height="7"></rect>
@@ -454,7 +465,7 @@ const WorkspacePage = () => {
                             <button 
                               className={`view-button ${viewMode === 'list' ? 'active' : ''}`} 
                               onClick={() => handleViewModeChange('list')}
-                              aria-label="Widok listy"
+                              aria-label="List view"
                             >
                               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                 <line x1="8" y1="6" x2="21" y2="6"></line>
@@ -466,22 +477,34 @@ const WorkspacePage = () => {
                               </svg>
                             </button>
                           </div>
+                          <button 
+                            className={`refresh-button ${isRefreshing ? 'refreshing' : ''}`}
+                            onClick={refreshData}
+                            disabled={isRefreshing}
+                            aria-label="Refresh data"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <polyline points="1 4 1 10 7 10"></polyline>
+                              <polyline points="23 20 23 14 17 14"></polyline>
+                              <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                            </svg>
+                          </button>
                           <div className="sort-controls">
                             <select 
                               value={sortOption} 
                               onChange={handleSortChange}
                               className="sort-select"
                             >
-                              <option value="name">Sortuj: Nazwa</option>
-                              <option value="status">Sortuj: Status</option>
-                              <option value="time">Sortuj: Czas</option>
+                              <option value="name">Sort: Name</option>
+                              <option value="status">Sort: Status</option>
+                              <option value="time">Sort: Time</option>
                             </select>
                           </div>
                           <button 
                             className="add-task-btn"
                             onClick={() => setIsCreateTaskModalOpen(true)}
                           >
-                            <span>+</span> Dodaj zadanie
+                            <span>+</span> Add task
                           </button>
                         </div>
                       </div>
@@ -490,7 +513,6 @@ const WorkspacePage = () => {
                       {error && <p className="error-message">{error}</p>}
                       
                       {viewMode === 'grid' ? (
-                        // Widok siatki
                         <div className="tasks-grid">
                           {filteredAndSortedTasks.map((task, index) => (
                             <motion.div 
@@ -521,14 +543,13 @@ const WorkspacePage = () => {
                                   className={`complete-task-btn ${task.completed ? 'completed' : ''}`}
                                   onClick={(e) => markTaskAsCompleted(task.id, e)}
                                 >
-                                  {task.completed ? 'Ukończone' : 'Oznacz jako ukończone'}
+                                  {task.completed ? 'Completed' : 'Mark as completed'}
                                 </button>
                               </div>
                             </motion.div>
                           ))}
                         </div>
                       ) : (
-                        // Widok listy
                         <div className="tasks-list-view">
                           {filteredAndSortedTasks.map((task, index) => (
                             <motion.div 
@@ -543,7 +564,7 @@ const WorkspacePage = () => {
                                 <button 
                                   className={`task-checkbox ${task.completed ? 'checked' : ''}`}
                                   onClick={(e) => markTaskAsCompleted(task.id, e)}
-                                  aria-label={task.completed ? 'Oznacz jako nieukończone' : 'Oznacz jako ukończone'}
+                                  aria-label={task.completed ? 'Mark as incomplete' : 'Mark as completed'}
                                 >
                                   {task.completed && (
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -593,8 +614,8 @@ const WorkspacePage = () => {
                             <line x1="8" y1="12" x2="16" y2="12"></line>
                             <line x1="12" y1="8" x2="12" y2="16"></line>
                           </svg>
-                          <p>{searchTerm ? 'Brak wyników wyszukiwania' : 'Brak zadań w tym projekcie'}</p>
-                          <button className="add-button">Dodaj zadanie</button>
+                          <p>{searchTerm ? 'No search results' : 'No tasks in this project'}</p>
+                          <button className="add-button">Add task</button>
                         </div>
                       )}
                     </>
@@ -605,8 +626,8 @@ const WorkspacePage = () => {
                           <path d="M9 18l6-6-6-6"></path>
                         </svg>
                       </div>
-                      <h3>Wybierz projekt</h3>
-                      <p>Wybierz projekt z listy po lewej stronie, aby zobaczyć zadania</p>
+                      <h3>Select a project</h3>
+                      <p>Choose a project from the list on the left to view tasks</p>
                     </div>
                   )}
                 </motion.div>
@@ -634,9 +655,9 @@ const WorkspacePage = () => {
                       </div>
                     </div>
                     <div className="pomodoro-settings">
-                      <h3>Ustawienia</h3>
+                      <h3>Settings</h3>
                       <div className="settings-option">
-                        <label>Czas pracy (minuty)</label>
+                        <label>Work time (minutes)</label>
                         <div className="settings-control">
                           <button className="settings-button">-</button>
                           <span>25</span>
@@ -644,7 +665,7 @@ const WorkspacePage = () => {
                         </div>
                       </div>
                       <div className="settings-option">
-                        <label>Czas przerwy (minuty)</label>
+                        <label>Break time (minutes)</label>
                         <div className="settings-control">
                           <button className="settings-button">-</button>
                           <span>5</span>
@@ -660,7 +681,6 @@ const WorkspacePage = () => {
         </div>
       </div>
 
-      {/* Modal tworzenia projektu */}
       <AnimatePresence>
         <CreateProjectModal
           isOpen={isCreateProjectModalOpen}
@@ -672,7 +692,6 @@ const WorkspacePage = () => {
         />
       </AnimatePresence>
 
-      {/* Modal tworzenia zadania */}
       <AnimatePresence>
         <CreateTaskModal
           isOpen={isCreateTaskModalOpen}

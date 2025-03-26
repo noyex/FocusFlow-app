@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const CreateTaskModal = ({ isOpen, onClose, onSubmit, taskData, onTaskDataChange, error, projectId }) => {
+  const [priorityOpen, setPriorityOpen] = useState(false);
+
   if (!isOpen) return null;
+
+  const priorityOptions = [
+    { value: 'LOW', label: 'Low', color: '#5fa8ee' },
+    { value: 'MEDIUM', label: 'Medium', color: '#f08a5d' },
+    { value: 'HIGH', label: 'High', color: '#ff6b6b' },
+  ];
+
+  const getPriorityColor = (value) => {
+    const option = priorityOptions.find(opt => opt.value === value);
+    return option ? option.color : '#5fa8ee';
+  };
+
+  const togglePriorityDropdown = () => setPriorityOpen(!priorityOpen);
+
+  const handlePrioritySelect = (value) => {
+    onTaskDataChange({ ...taskData, priority: value });
+    setPriorityOpen(false);
+  };
 
   return (
     <motion.div
@@ -50,16 +70,33 @@ const CreateTaskModal = ({ isOpen, onClose, onSubmit, taskData, onTaskDataChange
           
           <div className="form-group">
             <label htmlFor="priority">Priority</label>
-            <select
-              id="priority"
-              value={taskData.priority}
-              onChange={(e) => onTaskDataChange({ ...taskData, priority: e.target.value })}
-              required
-            >
-              <option value="LOW">Low</option>
-              <option value="MEDIUM">Medium</option>
-              <option value="HIGH">High</option>
-            </select>
+            <div className="custom-select-container">
+              <div 
+                className="custom-select-selected"
+                onClick={togglePriorityDropdown}
+              >
+                <div className="priority-indicator" style={{ backgroundColor: getPriorityColor(taskData.priority) }}></div>
+                <span>{priorityOptions.find(opt => opt.value === taskData.priority)?.label}</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
+              </div>
+
+              {priorityOpen && (
+                <div className="custom-select-options">
+                  {priorityOptions.map(option => (
+                    <div 
+                      key={option.value} 
+                      className={`custom-select-option ${taskData.priority === option.value ? 'selected' : ''}`}
+                      onClick={() => handlePrioritySelect(option.value)}
+                    >
+                      <div className="priority-indicator" style={{ backgroundColor: option.color }}></div>
+                      <span>{option.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           
           {error && <div className="error-message">{error}</div>}
